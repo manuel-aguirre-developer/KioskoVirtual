@@ -107,7 +107,7 @@ function mostrarPedidos(pedidos) {
       case 'esperando': bgColor = 'bg-gray-200'; break;
       case 'preparando': bgColor = 'bg-blue-200'; break;
       case 'pedido listo': bgColor = 'bg-yellow-200'; break;
-      case 'entregado': bgColor = 'bg-green-200'; break;
+      case 'entregado': bgColor = 'bg-green-2 00'; break;
     }
 
     return `
@@ -204,10 +204,18 @@ function hayPedidosRecientes(pedidos) {
 
 function mostrarPendientes() {
   const pedidos = todosLosPedidos.filter(p => p.estado_pedido !== 'entregado');
+  const perfil = document.getElementById('perfil');
+  perfil.style.background = "linear-gradient(to bottom right,rgb(255, 255, 255), rgb(255, 238, 194)"; // amarillo a rojo
+  btnPendientes.style.border = "2px solid black";
+  btnEntregados.style.border = "none";
   mostrarPedidos(pedidos);
 }
 
 function mostrarEntregados() {
   const pedidos = todosLosPedidos.filter(p => p.estado_pedido === 'entregado');
+  const perfil = document.getElementById('perfil');
+  perfil.style.background = "linear-gradient(to bottom right,rgb(255, 255, 255), rgb(206, 255, 238))"; // verde a azul
   mostrarPedidos(pedidos);
+  btnEntregados.style.border = "2px solid black";
+  btnPendientes.style.border = "none";
 }
