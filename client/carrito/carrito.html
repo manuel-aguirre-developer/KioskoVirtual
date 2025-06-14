@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carrito de Compras</title>
+  <link href="../../General/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../General/stylenotificaciones.css">
+
+</head>
+
+<body class="bg-gray-100">
+
+  <div id="notificacion" class="hidden bg-green-100 text-green-800 px-4 py-2 text-sm text-center"></div>
+
+  <header class="p-4 bg-blue-600 text-white flex justify-between items-center">
+    <button onclick="window.location.href='../../index.html'" class="text-sm flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <h1 class="text-lg font-bold">Carrito de Compras</h1>
+  </header>
+
+  <!-- vistas -->
+  <main class="p-4">
+
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">Tus productos</h2>
+      <div id="total" class="text-lg font-semibold text-right"></div>
+    </div>
+
+    <div id="carrito" class="space-y-4"></div>
+
+    <!-- Botones centrados -->
+    <div class="mt-6 flex justify-center gap-4 flex-wrap">
+      <button id="btnComprar" onclick="abrirMetodoPago()"
+        class="px-5 py-2 bg-green-700 text-white rounded hover:bg-green-600">Comprar</button>
+      <button id="btnVaciar" onclick="vaciarCarrito()"
+        class="px-5 py-2 bg-red-500 text-white rounded hover:bg-red-400">Vaciar carrito</button>
+      <button onclick="document.getElementById('modalMensaje').classList.remove('hidden')"
+        class="px-5 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Mensaje</button>
+    </div>
+
+  </main>
+
+  <!-- modal mensaje -->
+  <div id="modalMensaje" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white p-6 rounded-lg w-96">
+      <h3 class="text-xl font-semibold mb-4">Mensaje para tu pedido</h3>
+      <textarea id="mensajePersonalizado" class="w-full border p-2 rounded mb-4" rows="4"
+        placeholder="Ej: sin aderezos, sin lechuga..."></textarea>
+      <div class="flex justify-between">
+        <button onclick="document.getElementById('modalMensaje').classList.add('hidden')"
+          class="bg-gray-400 text-white px-4 py-2 rounded-md">Cancelar</button>
+        <button onclick="guardarMensajePersonalizado()"
+          class="bg-green-500 text-white px-4 py-2 rounded-md">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal método de pago -->
+  <div id="modalMetodo" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-white p-6 rounded-lg w-96 relative">
+      <button onclick="cerrarMetodo()" class="absolute top-2 right-2 text-gray-500 text-xl">&times;</button>
+      <h2 class="text-xl font-semibold text-center mb-4">Selecciona un método de pago</h2>
+      <div class="flex flex-col gap-4">
+        <button onclick="pagarEfectivo()"
+          class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Efectivo</button>
+        <button id="pagarTransferencia" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Transferencia
+          (Mercado Pago)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de iniciar sesión obligatorio -->
+  <div id="modalLogin" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-white p-6 rounded-lg w-96 relative">
+      <button onclick="cerrarLoginModal()" class="absolute top-2 right-2 text-gray-500 text-xl">&times;</button>
+      <h2 class="text-xl font-semibold text-center mb-4">Debes iniciar sesión</h2>
+      <p class="text-center mb-4">Para pagar en efectivo, necesitas iniciar sesión.</p>
+      <div class="flex justify-center">
+        <button onclick="redirigirLogin()" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Iniciar
+          sesión</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal cuenta pendiente -->
+  <div id="modalPendiente" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-white p-6 rounded-lg w-96 relative">
+      <button onclick="cerrarModal('modalPendiente')"
+        class="absolute top-2 right-2 text-gray-500 text-xl">&times;</button>
+      <h2 class="text-xl font-semibold text-center mb-4">Cuenta pendiente</h2>
+      <p class="text-center mb-4">Tu cuenta debe ser activada por el kioskero. Comunícate con él.</p>
+    </div>
+  </div>
+
+  <!-- Modal de Baneo -->
+  <div id="modalBaneado" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg max-w-md text-center">
+      <h2 class="text-xl font-bold mb-2">🚫 Usuario Baneado</h2>
+      <p>Tu ID de usuario es: <strong class="userId"></strong></p>
+      <p class="mt-4">Deberás comunicarte con el kiosko para resolver esta situación.</p>
+  </div>
+
+  <!-- Modal confirmar vaciado -->
+  <div id="modalConfirmarVaciado"
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden z-50">
+    <div class="bg-white p-6 rounded-lg w-96 relative">
+      <h2 class="text-xl font-semibold text-center mb-4">¿Vaciar carrito?</h2>
+      <p class="text-center mb-4">¿Estás seguro de que deseas vaciar el carrito?</p>
+      <div class="flex justify-center gap-4">
+        <button onclick="confirmarVaciado()"
+          class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Sí</button>
+        <button onclick="cerrarModal('modalConfirmarVaciado')"
+          class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">No</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="carrito.js"></script>
+</body>
+
+</html>

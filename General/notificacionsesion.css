@@ -1,0 +1,17 @@
+#notificacion {
+    background-color: #2259da; /* Cambiar a cualquier color que desees */
+    color: white; /* Cambiar color del texto */
+    font-size: 18px; /* Tamaño de la fuente más grande */
+    padding: 15px 30px; /* Más espacio alrededor del texto */
+    width: 400px; /* Ancho de la notificación */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Sombra para más estilo */
+  }
+  
+  #notificacion button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+  }

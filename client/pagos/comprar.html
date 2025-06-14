@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Detalles de la Compra</title>
+  <link href="../../General/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+  <div id="notificacion" class="hidden bg-green-100 text-green-800 px-4 py-2 text-sm text-center"></div>
+
+  <!-- Encabezado azul -->
+  <header class="p-4 bg-blue-600 text-white flex justify-between items-center">
+    <button onclick="window.location.href='../carrito/carrito.html'" class="text-sm flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <h1 class="text-lg font-bold">Detalles de la Compra</h1>
+  </header>
+
+  <main class="p-4">
+    <!-- Formulario de usuario -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h3 class="text-xl font-semibold mb-4">Información del Usuario</h3>
+
+      <label for="id" class="block text-lg font-medium mb-2">ID Usuario:</label>
+      <input type="text" id="id" name="id" class="w-full p-3 mb-4 border border-gray-300 rounded-md" readonly>
+      
+      <label for="usuario" class="block text-lg font-medium mb-2">Nombre:</label>
+      <input type="text" id="usuario" name="usuario" class="w-full p-3 mb-4 border border-gray-300 rounded-md" readonly>
+
+      <label for="email" class="block text-lg font-medium mb-2">Correo:</label>
+      <input type="email" id="email" name="email" class="w-full p-3 mb-4 border border-gray-300 rounded-md" readonly>
+
+      <label for="curso" class="block text-lg font-medium mb-2">Curso:</label>
+      <input type="text" id="curso" name="curso" class="w-full p-3 mb-4 border border-gray-300 rounded-md" readonly>
+    </div>
+
+    <!-- Productos -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h3 class="text-xl font-semibold mb-4">Productos Seleccionados</h3>
+      <div id="productos" class="mb-4">
+        <!-- Productos se insertan por JS -->
+      </div>
+    </div>
+
+    <!-- Total -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h3 class="text-xl font-semibold mb-4">Total de la Compra</h3>
+      <p id="total" class="text-xl font-bold text-green-600">$0.00</p>
+    </div>
+
+   <!-- Monto a pagar -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+       <label for="abono" class="block text-lg font-medium mb-2">Con cuanto va abonar:</label>
+      <input type="text" id="abono" name="abono" placeholder="Ingrese cantidad a abonar" class="w-full p-3 mb-4 border-2 border-gray-500 rounded-md" required>
+    </div>
+
+    <!-- Botón de comprar -->
+    <div class="flex justify-center">
+      <button id="btnComprar" class=" hidden bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md transition">
+        Comprar
+      </button>
+    </div>
+  </main>
+
+  <!-- Modal de confirmación de compra -->
+  <div id="modalConfirmacion" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white p-6 rounded-lg w-96">
+      <h3 class="text-xl font-semibold mb-4">¿Confirmas tu compra?</h3>
+      <div class="flex justify-between">
+        <button id="btnConfirmarCompra" class="bg-green-600 text-white px-6 py-3 rounded-md">
+          Confirmar
+        </button>
+        <button id="btnCancelar" class="bg-red-600 text-white px-6 py-3 rounded-md">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación de compra exitosa -->
+  <div id="modalConfirmacionCompra" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+      <h3 class="text-lg font-semibold text-center mb-4">Compra Confirmada</h3>
+      <p class="text-center">Tu compra ha sido procesada correctamente. ¡Gracias por tu compra!</p>
+      <div class="mt-4 flex justify-center gap-4">
+        <button id="btnCerrarConfirmacion" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700">Cerrar</button>
+      </div>
+    </div>
+  </div>  
+
+  <script src="comprar.js"></script>
+</body>
+</html>

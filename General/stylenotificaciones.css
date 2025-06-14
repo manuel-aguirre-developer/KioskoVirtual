@@ -1,0 +1,47 @@
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Estilo para la notificación */
+#notificacion { 
+  position: fixed;
+  top: 10px; /* Reduje un poco la distancia desde el top */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #679069; /* Color de la notificación */
+  color: rgb(250, 250, 250);
+  padding: 5px 15px; /* Reduje el padding */
+  border-radius: 5px;
+  font-size: 12px; /* Reduje el tamaño de la fuente */
+  display: none; /* Oculta la notificación por defecto */
+  z-index: 9999;
+}
+
+
+/* Mostrar la notificación con animación */
+#notificacion.mostrar {
+  display: block;
+  animation: fadeIn 0.5s ease-in-out;
+}
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+.shake-on-hover:hover {
+  animation: shake 0.4s ease-in-out;
+}
+#barraBusqueda {
+  position: relative;
+  z-index: 60;
+  background-color: white; /* por si algo semitransparente lo tapa */
+  color: black;
+}

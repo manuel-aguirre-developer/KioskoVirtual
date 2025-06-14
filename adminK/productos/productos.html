@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administración de Productos</title>
+  <!-- Este es el CDN de uicons (Figma Icons) -->
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css">
+  <link href="../../General/tailwind.min.css" rel="stylesheet">
+  <link href="../../General/stylenotificaciones.css" rel="stylesheet">
+  <script src="productos.js" defer></script>
+  <style> table {
+  border-collapse: collapse;
+}
+</style>
+</head>
+
+<body class="bg-gray-100 font-sans pb-10">
+  <div id="notificacion" class="bg-green-100 text-green-800 px-4 py-2 text-sm text-center" style="display: none;"></div>
+
+  <div class="flex justify-between items-center mb-4 mt-6 px-6">
+    <a href="../panel/panel.html" class="text-blue-600 font-bold text-lg hover:text-blue-800 transition text-2xl">✕</a>
+    <button id="abrirModalAgregar" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+      Agregar Producto
+    </button>
+  </div>
+
+
+  <!-- Título de la página -->
+  <h1 class="text-3xl font-bold text-center mb-6">Administración de Productos</h1>
+   <div class="mb-6 flex justify-center">
+  <input type="text" id="buscador" placeholder="Buscar productos..."
+  class="border-2 border-green-500 p-2 rounded mb-4 w-full max-w-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+</div>
+  <!-- Tabla de productos -->
+  <div class="w-full overflow-x-auto">
+    <table class="min-w-full bg-white shadow-md rounded-lg text-sm sm:text-base">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="py-3 px-4 text-left">ID</th>
+          <th class="py-3 px-4 text-left">Nombre</th>
+          <th class="py-3 px-4 text-left">Precio</th>
+          <th class="py-3 px-4 text-left">Tipo</th>
+          <th class="py-3 px-4 text-left whitespace-nowrap">Acción</th>
+        </tr>
+      </thead>
+      <tbody id="tablaProductos">
+        <!-- Los productos se cargarán aquí dinámicamente desde JavaScript -->
+      </tbody>
+    </table>
+  </div>
+  <div id="paginacion" class="mt-4 flex justify-center"></div>
+  </div>
+
+  <!-- Modal Modificar Producto -->
+  <div id="modalModificar"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center overflow-y-auto overflow-x-hidden z-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] mt-10 mb-10 overflow-y-auto">
+      <h2 class="text-xl font-semibold mb-6">Modificar Producto</h2>
+      <div class="flex gap-6">
+        <!-- Formulario -->
+        <form id="formModificarProducto" class="flex-1 space-y-4" enctype="multipart/form-data">
+          <input type="hidden" id="productoId">
+
+          <div class="flex flex-col">
+            <label for="nombre" class="font-medium">Nombre:</label>
+            <input type="text" id="nombre" class="p-2 border border-gray-300 rounded" required>
+          </div>
+
+          <div class="flex flex-col">
+            <label for="precio" class="font-medium">Precio:</label>
+            <input type="number" id="precio" class="p-2 border border-gray-300 rounded" required>
+          </div>
+
+          <div class="flex flex-col">
+            <label for="imagen" class="font-medium">Imagen:</label>
+            <input type="file" id="imagen" name="imagen" class="p-2 border border-gray-300 rounded" accept="image/*">
+          </div>
+
+          <div class="flex flex-col">
+            <label for="tipo" class="font-medium">Tipo:</label>
+            <select id="tipo" class="p-2 border border-gray-300 rounded" required>
+              <option value="bebida">bebida</option>
+              <option value="comida">comida</option>
+              <option value="galletita">galletita</option>
+              <option value="golosina">golosina</option>
+            </select>
+          </div>
+
+          <div class="flex justify-between mt-6">
+            <button type="button" id="cancelarBtn" class="px-4 py-2 bg-red-500 text-white rounded-md">Cancelar</button>
+            <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-md">Confirmar</button>
+          </div>
+          <input type="hidden" id="imagen_actual" name="imagen_actual">
+        </form>
+
+        <!-- Imagen del producto -->
+        <div id="imagenProducto" class="flex-1 flex items-center justify-center">
+          <!-- Imagen cargada desde JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal Agregar Producto -->
+  <div id="modalAgregar"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center hidden overflow-y-auto z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] mt-10 mb-10 overflow-y-auto">
+      <h2 class="text-xl font-semibold mb-6">Agregar Producto</h2>
+      <div class="flex gap-6">
+        <!-- Formulario -->
+        <form id="formAgregarProducto" class="flex-1 space-y-4" enctype="multipart/form-data">
+          <div class="flex flex-col">
+            <label for="nuevoNombre" class="font-medium">Nombre:</label>
+            <input type="text" id="nuevoNombre" class="p-2 border border-gray-300 rounded" required>
+          </div>
+
+          <div class="flex flex-col">
+            <label for="nuevoPrecio" class="font-medium">Precio:</label>
+            <input type="number" step="0.01" id="nuevoPrecio" class="p-2 border border-gray-300 rounded" required>
+          </div>
+
+          <div class="flex flex-col">
+            <label for="nuevaImagen" class="font-medium">Imagen:</label>
+            <input type="file" id="nuevaImagen" name="nuevaImagen" class="p-2 border border-gray-300 rounded"
+              accept="image/*">
+          </div>
+
+          <div class="flex flex-col">
+            <label for="nuevoTipo" class="font-medium">Tipo:</label>
+            <select id="nuevoTipo" class="p-2 border border-gray-300 rounded" required>
+              <option value="">Seleccione un tipo</option>
+              <option value="bebida">bebida</option>
+              <option value="comida">comida</option>
+              <option value="postre">postre</option>
+              <option value="dulce">dulce</option>
+              <option value="salado">salado</option>
+              <option value="galletita">galletita</option>
+            </select>
+          </div>
+
+          <div class="flex justify-between mt-6">
+            <button type="button" id="cancelarAgregar"
+              class="px-4 py-2 bg-gray-400 text-white rounded-md">Cancelar</button>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md">Guardar</button>
+          </div>
+        </form>
+
+        <!-- Contenedor de preview -->
+        <div id="previewImagenAgregar" class="flex-1 flex items-center justify-center bg-gray-100 rounded">
+          <span class="text-gray-400">Vista previa</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal Confirmar Eliminación -->
+  <div id="modalEliminar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-xs">
+      <h2 class="text-xl font-semibold mb-4">Confirmar Eliminación</h2>
+      <p>¿Estás seguro de que quieres eliminar este producto?</p>
+      <div class="flex justify-between mt-4">
+        <button id="cancelarEliminar" class="px-4 py-2 bg-gray-400 text-white rounded-md">Cancelar</button>
+        <button id="confirmarEliminar" class="px-4 py-2 bg-red-500 text-white rounded-md">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

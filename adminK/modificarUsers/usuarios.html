@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Usuarios</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="../../General/tailwind.min.css" rel="stylesheet" />
+  <script src="users.js" defer></script>
+  <style>
+  table {
+    border-collapse: collapse;
+  }
+  td {
+    border-bottom: 1px solid black; /* línea debajo de cada celda */
+    padding: 8px; /* espacio para legibilidad */
+  }
+</style>
+
+</head>
+
+<body class="bg-gray-50 min-h-screen flex items-start justify-center py-10 px-4">
+
+  <div id="spinner" style="display:none; 
+  position: fixed; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+" class="flex justify-center items-center gap-2 text-blue-600 font-semibold">
+  <svg class="animate-spin h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none"
+    viewBox="0 0 24 24">
+    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+  </svg>
+  <span>Cargando usuarios...</span>
+</div>
+
+
+  <div id="contenidoPrincipal" class="w-full max-w-6xl bg-white shadow-2xl rounded-xl p-6 md:p-10 overflow-x-auto"
+    style="display:none;">
+
+    <!-- Botón de cierre al lado izquierdo -->
+    <div class="flex justify-start mb-6 md:mb-8">
+      <a href="../panel/panel.html" class="text-blue-600 font-bold text-2xl hover:text-blue-800 transition">✕</a>
+    </div>
+
+    <h2 class="text-3xl md:text-4xl font-extrabold text-green-600 mb-10 text-center">Gestión de Cuentas</h2>
+
+    <div class="mb-6 flex justify-center">
+      <input type="text" id="buscadorUsuarios" placeholder="Buscar usuario por nombre..."
+        class="w-full max-w-md px-4 py-2 border-2 border-green-500 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+    </div>
+
+    <!-- Contenedor centrado para la tabla -->
+    <div class="w-full overflow-x-auto">
+      <table id="tablaUsuarios"
+        class="min-w-[700px] md:min-w-[900px] table-auto text-base md:text-lg shadow-md border border-gray-300 mx-auto">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="px-4 md:px-6 py-4 border">ID</th>
+            <th class="px-4 md:px-6 py-4 border">Usuario</th>
+            <th class="px-4 md:px-6 py-4 border">Email</th>
+            <th class="px-4 md:px-6 py-4 border">Estado</th>
+            <th class="px-4 md:px-6 py-4 border">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Usuarios dinámicos -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Controles de paginación -->
+    <div id="paginacion" class="flex justify-center items-center mt-8"></div>
+
+    <!-- Modal de confirmación -->
+    <div id="modalConfirmacion"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+      <div class="bg-white rounded-lg shadow-lg p-6 md:p-8 max-w-sm w-full text-center">
+        <h3 id="modalMensaje" class="text-lg md:text-xl font-semibold mb-4 md:mb-6"></h3>
+        <div class="flex justify-center gap-4 md:gap-6">
+          <button id="btnConfirmar"
+            class="bg-green-600 text-white px-4 md:px-6 py-2 rounded hover:bg-green-700 transition text-base md:text-lg">Confirmar</button>
+          <button id="btnCancelar"
+            class="bg-gray-300 px-4 md:px-6 py-2 rounded hover:bg-gray-400 transition text-base md:text-lg">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>

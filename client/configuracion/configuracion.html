@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuración de Usuario</title>
+  <link href="../../General/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+
+  <div id="perfil" class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-md mt-6">
+    <button onclick="window.location.href='../../index.html'" class="text-blue-600 font-bold text-lg">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <h1 class="text-3xl font-semibold text-center mb-6">Configuración de Usuario</h1>
+    <form id="usuarioForm" method="post" class="space-y-4">
+      <!-- Campos cargados por JS -->
+    </form>
+  </div>
+
+  <!-- Modal de Confirmación -->
+  <div id="confirmModal" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-75 hidden">
+    <div class="bg-white p-6 rounded-md shadow-lg max-w-sm w-full">
+      <h2 class="text-lg font-semibold mb-4">¿Estás seguro?</h2>
+      <p>Esto cambiará tu estado a "Pendiente", lo que no te permitirá realizar ciertas acciones.</p>
+      <div class="mt-4 flex justify-end space-x-4">
+        <button id="cancelButton"
+          class="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded-md">Cancelar</button>
+        <button id="confirmButton"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Éxito -->
+  <div id="successModal" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-75 hidden">
+    <div class="bg-white p-6 rounded-md shadow-lg max-w-sm w-full">
+      <h2 class="text-lg font-semibold mb-4">¡Perfil actualizado!</h2>
+      <p>Los cambios se guardaron correctamente.</p>
+      <div class="mt-4 flex justify-end">
+        <button id="closeSuccessModal"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Login (aparece si no estás logueado) -->
+  <div id="modalLogin" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-white p-6 rounded-lg w-96 relative">
+      <button onclick="cerrarLoginModal()" class="absolute top-2 right-2 text-gray-500 text-xl">&times;</button>
+      <h2 class="text-xl font-semibold text-center mb-4">Debes iniciar sesión</h2>
+      <p class="text-center mb-4">Para configurar tu perfil, necesitas iniciar sesión.</p>
+      <div class="flex justify-center">
+        <button onclick="redirigirLogin()" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Iniciar
+          sesión</button>
+      </div>
+    </div>
+  </div>
+  <!-- Modal de cerrar sesión -->
+  <div id="cerrarSesionModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-white p-6 rounded-lg w-96 relative">
+      <button onclick="cerrarCerrarSesionModal()" class="absolute top-2 right-2 text-gray-500 text-xl">&times;</button>
+      <h2 class="text-xl font-semibold text-center mb-4">¿Estás seguro de cerrar sesión?</h2>
+      <p class="text-center mb-4">Una vez cerrada la sesión, ya no podrás comprar. Deberás volver a iniciar sesion.</p>
+      <div class="flex justify-center mt-6 space-x-6">
+        <button onclick="cerrarCerrarSesionModal()"
+          class="px-6 py-3 bg-red-600 text-white font-semibold rounded-lg shadow hover:bg-red-700 transition duration-300">
+          Cancelar
+        </button>
+        <button onclick="accionCerrarSesion()"
+          class="px-6 py-3 bg-green-700 text-white font-semibold rounded-lg shadow hover:bg-green-800 transition duration-300">
+          Acepto
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Modal de Baneo -->
+  <div id="modalBaneado" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg max-w-md text-center">
+      <h2 class="text-xl font-bold mb-2">🚫 Usuario Baneado</h2>
+      <p>Tu ID de usuario es: <strong class="userId"></strong></p>
+      <p class="mt-4">Deberás comunicarte con el kiosko para resolver esta situación.</p>
+    </div>
+  </div>
+  <script src="config.js"></script>
+</body>
+
+</html>

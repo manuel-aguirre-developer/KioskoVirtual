@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestión de Pedidos</title>
+  <link href="../../General/tailwind.min.css" rel="stylesheet" />
+  <script src="pedidos.js" defer></script>
+</head>
+
+<body class="bg-gray-50 p-4 sm:p-6">
+
+  <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6">
+    <a href="../panel/panel.html" class="text-blue-600 font-bold text-lg hover:text-blue-800 transition">✕</a>
+    <h2 class="text-2xl font-semibold text-yellow-600 mb-4 text-center">Gestión de Pedidos</h2>
+    <table id="tablaPedidos" class="w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
+      <thead class="bg-gray-100">
+        <tr>
+          <th>ID Venta</th>
+          <th>ID Usuario</th>
+          <th>Fecha</th>
+          <th>Total</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <!-- Pedidos dinámicos -->
+      </tbody>
+    </table>
+         <!-- Spinner de carga (centrado completo) -->
+<div id="spinner" class="fixed inset-0 flex justify-center items-center bg-white z-50" style="display:none;">
+  <div class="flex flex-col items-center">
+    <svg class="animate-spin h-8 w-8 text-blue-600 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+    <span class="text-blue-600 font-semibold">Cargando pedidos...</span>
+  </div>
+</div>
+    <div id="modalConfirmacion" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div class="bg-white p-4 rounded shadow">
+        <p id="mensajeModal">¿Seguro que quieres cambiar el estado?</p>
+        <div class="mt-4 flex justify-end gap-2">
+          <button onclick="cerrarModal()" class="px-3 py-1 bg-gray-300 rounded">Cancelar</button>
+          <button id="btnConfirmar" class="px-3 py-1 bg-blue-500 text-white rounded">Confirmar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Detalles del Pedido -->
+    <div id="modalDetalles"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 py-8 overflow-y-auto z-50 hidden">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md max-h-full overflow-y-auto">
+        <h3 class="modal-title text-lg font-semibold mb-4"></h3>
+        <div class="modal-body mb-6"></div>
+        <div id="botonesEstados" class="flex justify-center gap-3 mb-4"></div>
+        <!-- Aquí irán los botones de cambio de estado -->
+        <div class="flex justify-center">
+          <button onclick="cerrarModalDetalles()"
+            class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="paginacion" class="mt-4 flex justify-center flex-wrap gap-2"></div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</body>
+
+</html>

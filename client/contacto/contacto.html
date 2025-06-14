@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Equipo del Proyecto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    /* Estado inicial: iconos ocultos y desplazados */
+    #card-manuel .icon {
+      transform: translateY(10px);
+      opacity: 0;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+
+    /* Delays para cada icono */
+    #card-manuel .icon:nth-child(1) {
+      transition-delay: 0.1s;
+    }
+
+    #card-manuel .icon:nth-child(2) {
+      transition-delay: 0.2s;
+    }
+
+    #card-manuel .icon:nth-child(3) {
+      transition-delay: 0.3s;
+    }
+
+    #card-manuel .icon:nth-child(4) {
+      transition-delay: 0.4s;
+    }
+
+    /* Cuando la tarjeta tiene clase revealed, mostrar iconos con animación */
+    #card-manuel.revealed .icon {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 p-4 sm:p-6 font-sans">
+  <button onclick="window.location.href='../../index.html'" class="text-blue-600 font-bold text-lg">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+  <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-center mb-8 sm:mb-12">Equipo del Proyecto 7° 2°</h1>
+
+
+
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-10 justify-items-center">
+    <!-- Card 2 Mejorada -->
+    <div id="card-manuel"
+      class="relative group bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 sm:p-8 text-center transform transition-transform hover:-translate-y-2 hover:scale-105 cursor-pointer"
+      role="button" tabindex="0" aria-pressed="false"
+      aria-label="Tarjeta Manuel Aguirre, toque para mostrar redes sociales">
+      <!-- Badge Disponible -->
+      <div
+        class="absolute top-4 right-4 bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-semibold shadow-sm animate-pulse">
+        Disponible
+      </div>
+
+      <img src="img/manu2.png" alt="Perfil 3"
+        class="w-40 h-40 sm:w-52 sm:h-52 rounded-full object-cover mx-auto mb-4 sm:mb-6" />
+      <div class="text-2xl sm:text-3xl font-semibold">Manuel Aguirre, 18</div>
+      <div class="text-lg sm:text-xl text-blue-600 font-semibold mb-2">Desarrollador · FullStack</div>
+      <div class="text-lg sm:text-xl text-gray-600 mb-4 sm:mb-6">Developer</div>
+
+      <!-- Redes Sociales -->
+      <div class="flex justify-center space-x-4 sm:space-x-6 text-3xl sm:text-4xl text-gray-600 mb-4">
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=manuel.aguirre4116@gmail.com" title="Correo"
+          class="icon hover:text-blue-500 transition duration-300"><i class="fas fa-envelope"></i></a>
+        <a href="https://github.com/aguirre-manuel" target="_blank" title="GitHub"
+          class="icon hover:text-gray-900 transition duration-300"><i class="fab fa-github"></i></a>
+        <a href="https://discord.com/users/986742986647928922" target="_blank" title="Discord"
+          class="icon hover:text-indigo-500 transition duration-300"><i class="fab fa-discord"></i></a>
+        <a href="https://instagram.com/_aguirre_manuel_" target="_blank" title="Instagram"
+          class="icon hover:text-pink-500 transition duration-300"><i class="fab fa-instagram"></i></a>
+      </div>
+
+      <!-- Stats Badges -->
+      <div class="flex justify-center space-x-2">
+        <span class="bg-blue-100 text-blue-600 text-xs px-3 py-1 rounded-full font-medium">Trabajador</span>
+        <span class="bg-green-100 text-green-600 text-xs px-3 py-1 rounded-full font-medium">Narcisista</span>
+        <span class="bg-red-100 text-red-600 text-xs px-3 py-1 rounded-full font-medium">Filosofo</span>
+      </div>
+    </div>
+
+    <!-- Card 3 Mejorada -->
+    <div
+      class="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 sm:p-8 text-center transform transition-transform hover:-translate-y-2 hover:scale-105">
+
+      <!-- Badge Disponible -->
+      <div
+        class="absolute top-4 right-4 bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-semibold shadow-sm animate-pulse">
+        Disponible
+      </div>
+
+      <!-- Imagen con evento para abrir modal -->
+      <img id="thiago-photo" src="img/thiago.webp" alt="Perfil 2"
+        class="w-40 h-40 sm:w-52 sm:h-52 rounded-full object-cover mx-auto mb-4 sm:mb-6 cursor-pointer transition-shadow hover:shadow-lg" />
+
+      <div class="text-2xl sm:text-3xl font-semibold">Thiago Avalos, 18</div>
+      <div class="text-lg sm:text-xl text-blue-600 font-semibold mb-2">Desarrollador · FullStack</div>
+      <div class="text-lg sm:text-xl text-gray-600 mb-4 sm:mb-6">Developer</div>
+
+      <!-- Redes Sociales -->
+      <div class="flex justify-center space-x-4 sm:space-x-6 text-3xl sm:text-4xl text-gray-600 mb-4">
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=chuckytato08@gmail.com" title="Correo"
+          class="hover:text-blue-500 transition duration-300">
+          <i class="fas fa-envelope"></i>
+        </a>
+        <a href="https://github.com/chuckytato" target="_blank" title="GitHub"
+          class="hover:text-gray-900 transition duration-300">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://discord.com/users/858823885146161152" target="_blank" title="Discord"
+          class="hover:text-indigo-500 transition duration-300">
+          <i class="fab fa-discord"></i>
+        </a>
+        <a href="https://instagram.com/thiago_alejandro_a" target="_blank" title="Instagram"
+          class="hover:text-pink-500 transition duration-300">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
+
+      <!-- Stats Badges -->
+      <div class="flex justify-center space-x-2">
+        <span class="bg-blue-100 text-blue-600 text-xs px-3 py-1 rounded-full font-medium">Responsable</span>
+        <span class="bg-yellow-100 text-yellow-600 text-xs px-3 py-1 rounded-full font-medium">Trabajador</span>
+        <span class="bg-red-100 text-red-600 text-xs px-3 py-1 rounded-full font-medium">Organizador</span>
+      </div>
+    </div>
+
+    <!-- Modal Lightbox para imagen ampliada -->
+    <div id="modal-photo"
+      class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+      <div class="relative w-80 h-80 rounded-full overflow-hidden shadow-xl"> <!-- w-80 = 320px -->
+        <button id="modal-close"
+          class="absolute top-3 right-3 text-white text-3xl font-bold hover:text-red-500 transition">&times;</button>
+        <img src="img/thiago.webp" alt="Thiago Ampliado" class="w-full h-full rounded-full object-cover" />
+      </div>
+    </div>
+
+
+    <!-- Card 1 Mejorada -->
+    <div
+      class="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 sm:p-8 text-center transform transition-transform hover:-translate-y-2 hover:scale-105">
+      <!-- Badge Disponible -->
+      <div
+        class="absolute top-4 right-4 bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-semibold shadow-sm animate-pulse">
+        Disponible
+      </div>
+
+      <img src="img/david.jpg" alt="Perfil 1"
+        class="w-40 h-40 sm:w-52 sm:h-52 rounded-full object-cover mx-auto mb-4 sm:mb-6" />
+      <div class="text-2xl sm:text-3xl font-semibold">David Pérez, 19</div>
+      <div class="text-lg sm:text-xl text-blue-600 font-semibold mb-2">Diseñador · Marketing</div>
+      <div class="text-lg sm:text-xl text-gray-600 mb-4 sm:mb-6">Estudio de mercado</div>
+
+      <!-- Redes Sociales -->
+      <div class="flex justify-center space-x-4 sm:space-x-6 text-3xl sm:text-4xl text-gray-600 mb-4">
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jonatandavidperez502@gmail.com" title="Correo"
+          class="hover:text-blue-500 transition duration-300">
+          <i class="fas fa-envelope"></i>
+        </a>
+        <a href="https://github.com/Jdavid-perez" target="_blank" title="GitHub"
+          class="hover:text-gray-900 transition duration-300">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://discord.com/users/595051197757390857" target="_blank" title="Discord"
+          class="hover:text-indigo-500 transition duration-300">
+          <i class="fab fa-discord"></i>
+        </a>
+        <a href="https://instagram.com/thegame.1.0" target="_blank" title="Instagram"
+          class="hover:text-pink-500 transition duration-300">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
+
+      <!-- Stats Badges -->
+      <div class="flex justify-center space-x-2">
+        <span class="bg-blue-100 text-blue-600 text-xs px-3 py-1 rounded-full font-medium">Analitico</span>
+        <span class="bg-yellow-100 text-yellow-600 text-xs px-3 py-1 rounded-full font-medium">Critico</span>
+        <span class="bg-red-100 text-red-600 text-xs px-3 py-1 rounded-full font-medium">Comunicador</span>
+      </div>
+    </div>
+
+
+    <!-- Card 4 Mejorada -->
+    <div
+      class="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 sm:p-8 text-center transform transition-transform hover:-translate-y-2 hover:scale-105">
+      <!-- Badge Disponible -->
+      <div
+        class="absolute top-4 right-4 bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-semibold shadow-sm animate-pulse">
+        Disponible
+      </div>
+
+      <img src="img/bruno.jpg" alt="Perfil 4"
+        class="w-40 h-40 sm:w-52 sm:h-52 rounded-full object-cover mx-auto mb-4 sm:mb-6" />
+      <div class="text-2xl sm:text-3xl font-semibold">Bruno Caballero, 18</div>
+      <div class="text-lg sm:text-xl text-blue-600 font-semibold mb-2">Diseñador de Base de datos</div>
+      <div class="text-lg sm:text-xl text-gray-600 mb-4 sm:mb-6">Base de datos y Diseño</div>
+
+      <!-- Redes Sociales -->
+      <div class="flex justify-center space-x-4 sm:space-x-6 text-3xl sm:text-4xl text-gray-600 mb-4">
+        <a href="mailto:bruno@example.com" title="Correo" class="hover:text-blue-500 transition duration-300">
+          <i class="fas fa-envelope"></i>
+        </a>
+        <a href="https://github.com/brunoc" target="_blank" title="GitHub"
+          class="hover:text-gray-900 transition duration-300">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://discordapp.com/users/bruno#8765" target="_blank" title="Discord"
+          class="hover:text-indigo-500 transition duration-300">
+          <i class="fab fa-discord"></i>
+        </a>
+        <a href="https://instagram.com/brunoc" target="_blank" title="Instagram"
+          class="hover:text-pink-500 transition duration-300">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
+
+      <!-- Stats Badges -->
+      <div class="flex justify-center space-x-2">
+        <span class="bg-blue-100 text-blue-600 text-xs px-3 py-1 rounded-full font-medium">Critico</span>
+        <span class="bg-green-100 text-green-600 text-xs px-3 py-1 rounded-full font-medium">Analítico</span>
+        <span class="bg-red-100 text-red-600 text-xs px-3 py-1 rounded-full font-medium">Comunicador</span>
+      </div>
+    </div>
+
+    <script>
+      /* Activación click para la Card 2 (adaptado para mobile) */
+      document.addEventListener('DOMContentLoaded', () => {
+        const card2 = document.getElementById('card-manuel');
+        if (card2) {
+          card2.addEventListener('click', () => {
+            card2.classList.toggle('revealed');
+
+            // Actualizar atributo aria-pressed para accesibilidad
+            const isRevealed = card2.classList.contains('revealed');
+            card2.setAttribute('aria-pressed', isRevealed.toString());
+          });
+        }
+      });
+      // Seleccionamos elementos
+      const photo = document.getElementById('thiago-photo');
+      const modal = document.getElementById('modal-photo');
+      const closeBtn = document.getElementById('modal-close');
+
+      // Abrir modal al clickear la foto
+      photo.addEventListener('click', () => {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100');
+      });
+
+      // Cerrar modal al clickear el botón de cerrar
+      closeBtn.addEventListener('click', () => {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-100');
+      });
+
+      // Cerrar modal si click fuera de la imagen (en el overlay)
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeBtn.click();
+        }
+      });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catálogo de Productos</title>
+  <link href="General/stylenotificaciones.css" rel="stylesheet">
+  <link href="General/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="./client/index/inicio.js" defer></script>
+<style>
+/* === Animaciones para el splash screen === */
+
+/* Animación para hacer que un elemento entre desde la derecha con desvanecimiento */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100vw); /* Empieza fuera de la pantalla (a la derecha) */
+    opacity: 0; /* Completamente transparente */
+  }
+  to {
+    transform: translateX(0); /* Termina en su posición original */
+    opacity: 1; /* Completamente visible */
+  }
+}
+
+/* Animación para desvanecer un elemento y ocultarlo */
+@keyframes fadeOut {
+  to {
+    opacity: 0; /* Transparente */
+    visibility: hidden; /* Oculto */
+  }
+}
+
+/* Animación que combina desvanecer y hacer zoom */
+@keyframes fadeInZoom {
+  from {
+    opacity: 0; /* Comienza transparente */
+    transform: scale(0.8); /* Más pequeño */
+  }
+  to {
+    opacity: 1; /* Completamente visible */
+    transform: scale(1); /* Tamaño normal */
+  }
+}
+
+/* Aplica la animación de entrada desde la derecha a un logo */
+.logo-animado {
+  animation: slideInRight 1.2s ease-out forwards;
+}
+
+/* Aplica la animación de salida (desvanecer) */
+.fade-out {
+  animation: fadeOut 1s ease-in forwards;
+}
+
+/* Aplica animación de entrada con zoom */
+.fade-in-zoom {
+  animation: fadeInZoom 1.2s ease-out forwards;
+}
+
+/* === Estilo de texto con fuente pixel retro === */
+#bienvenido {
+  font-family: 'Press Start 2P', cursive; /* Fuente tipo arcade */
+  letter-spacing: 2px; /* Espaciado entre letras */
+}
+
+/* === Estilos del contenedor del splash screen === */
+#splash {
+  position: fixed;     /* Fijo en toda la pantalla */
+  inset: 0;            /* Top, right, bottom, left = 0 */
+  background: white;   /* Fondo blanco */
+  z-index: 9999;       /* Superposición por encima de todo */
+  display: none;       /* Oculto inicialmente */
+  opacity: 0;          /* Transparente */
+  align-items: center; /* Centrar verticalmente */
+  justify-content: center; /* Centrar horizontalmente */
+  flex-direction: column;  /* Elementos en columna */
+  overflow: hidden;    /* Oculta desbordamiento */
+  transition: opacity 0.5s ease; /* Transición suave */
+}
+
+/* Clase que muestra el splash screen */
+#splash.visible {
+  display: flex; /* Se vuelve visible con flexbox */
+  opacity: 1;    /* Totalmente visible */
+}
+
+/* === Fondo superior del splash screen === */
+#splash .fondo-superior {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80%; /* Cubre el 80% superior */
+  background-color: #5fa8f2; /* Azul claro */
+  z-index: 0; /* Por detrás del contenido */
+}
+
+/* Color de los paths SVG dentro del fondo superior */
+#splash .fondo-superior svg path {
+  fill: #84c3f7; /* Azul más claro */
+}
+
+/* Fondo inferior (el 20% inferior) */
+#splash .fondo-inferior {
+  position: absolute;
+  top: 80%;
+  left: 0;
+  width: 100%;
+  height: 20%;
+  background-color: #84c3f7; /* Mismo color que el path */
+  z-index: -1; /* Detrás del fondo superior */
+}
+
+/* Oculta el contenido principal mientras el splash está activo */
+#contenidoPrincipal {
+  opacity: 0; /* Transparente */
+  pointer-events: none; /* No interactivo */
+  transition: opacity 0.5s ease;
+}
+
+/* Cuando el splash termina, se muestra el contenido principal */
+#contenidoPrincipal.visible {
+  opacity: 1; /* Visible */
+  pointer-events: auto; /* Interactivo */
+}
+
+/* Estilo para nombres largos de productos */
+.nombre-producto {
+  white-space: nowrap;        /* Evita que el texto se divida en varias líneas */
+  overflow: hidden;           /* Oculta el texto que excede */
+  text-overflow: ellipsis;    /* Muestra "..." si el texto es demasiado largo */
+  max-width: 100%;            /* Máximo ancho permitido */
+  display: block;             /* Comportamiento de bloque */
+}
+
+/* Animación de entrada para tarjetas (cards) */
+.card-appear {
+  opacity: 0;                 /* Inicialmente oculto */
+  transform: translateY(20px); /* Ligeramente desplazado hacia abajo */
+  transition: opacity 0.5s ease, transform 0.5s ease; /* Transición suave */
+}
+
+/* Clase para mostrar la tarjeta animadamente */
+.card-appear.show {
+  opacity: 1;               /* Se vuelve visible */
+  transform: translateY(0); /* En su lugar original */
+}
+</style>
+
+
+  <!-- Fuente Pixel -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+</head>
+
+<body class="bg-gray-100 flex flex-col min-h-screen">
+  <!-- Splash Screen -->
+  <div id="splash">
+    <div class="fondo-superior">
+      <svg class="absolute bottom-0 w-full" viewBox="0 0 1440 400" preserveAspectRatio="none">
+        <path d="M0,0 C720,360 1100,360 1260,380 L1440,400 L0,400 Z" />
+      </svg>
+    </div>
+    <div class="fondo-inferior"></div>
+
+    <img src="imagenes/logo.png" alt="Logo" id="logo" class="w-40 mx-auto opacity-0" />
+   <p id="bienvenido" class="text-3xl mt-6 opacity-0 font-semibold text-white"></p>
+  </div>
+  <!-- Encabezado -->
+  <div id="notificacion" class="hidden bg-green-100 text-green-800 px-4 py-2 text-sm text-center"></div>
+
+  <header class="fixed top-0 left-0 w-full bg-blue-600 text-white shadow z-50 p-2">
+    <div class="flex justify-between items-center">
+      <div class="flex items-center space-x-4">
+        <h1 onclick="recargarPagina()" class="text-lg font-bold cursor-pointer">Kiosko Tecnica 4</h1>
+      </div>
+      <div class="space-y-1.5 cursor-pointer" onclick="toggleMenu()">
+        <div class="w-6 h-0.5 bg-white"></div>
+        <div class="w-6 h-0.5 bg-white"></div>
+        <div class="w-6 h-0.5 bg-white"></div>
+      </div>
+    </div>
+    <div class="mt-2">
+      <input type="text" id="barraBusqueda" placeholder="Buscar productos..." oninput="filtrarCatalogo()"
+        class="w-full p-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600" />
+    </div>
+    <div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-40 z-60" onclick="toggleMenu()"></div>
+  </header>
+
+  <aside id="menuDrawer"
+    class="fixed top-0 right-0 h-full w-4/5 bg-white shadow-lg transform translate-x-full transition-transform duration-300 z-50 p-6 flex flex-col justify-between">
+    
+    <div class="space-y-4">
+      <div class="flex justify-between items-center mb-4">
+        <button id="botonlogin" onclick="irALogin()" class="flex items-center space-x-2">
+          <img src="imagenes/user.png" alt="Perfil" class="w-10 h-10 rounded-full border-2 border-blue-600">
+          <span id="nombreUsuario" class="text-black">Registrarse</span>
+        </button>
+        <button onclick="toggleMenu()" class="text-blue-600 font-bold text-lg">✕</button>
+      </div>
+      <button class="w-full py-2 px-4 bg-blue-300 hover:bg-blue-400 rounded" onclick="accionInicio()">Inicio</button>
+      <button class="w-full py-2 px-4 bg-blue-300 hover:bg-blue-400 rounded" onclick="verPedidos()">Mis pedidos</button>
+      <button class="w-full py-2 px-4 bg-blue-300 hover:bg-blue-400 rounded" onclick="configuracion()">Configuración de perfil</button>
+    </div>
+    
+    <button class="w-full py-2 px-4 bg-blue-300 hover:bg-blue-400 rounded mt-4" onclick="contactarse()">Contacto</button>
+</aside>
+
+  <main id="contenidoPrincipal" class="p-4 fade-in pt-20 flex-grow <main id="contenidoPrincipal" class="p-4 fade-in pt-20 flex-grow pb-24">
+
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-xl font-bold">Catálogo de Productos</h2>
+      <button onclick="toggleFiltroMenu()"
+        class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded flex items-center">
+        <i class="fas fa-sliders-h"></i>
+      </button>
+    </div>
+    <!-- Spinner de carga (inicialmente oculto) -->
+    <div id="spinner" class="flex justify-center items-center my-6" style="display:none;">
+      <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+        viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <span class="ml-2 text-blue-600 font-semibold">Cargando Productos...</span>
+    </div>
+    <p id="sinProductos" class="text-center text-gray-600 font-semibold my-6 hidden">No hay productos disponibles.</p>
+    <div id="catalogo" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 "></div>
+    <button id="verMas" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+      Ver más
+    </button>
+
+  </main>
+
+  <aside id="filtroDrawer"
+    class="fixed top-0 left-0 h-full w-4/5 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 z-50 p-6 space-y-4">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Filtrar Productos</h3>
+      <button onclick="toggleFiltroMenu()" class="text-blue-600 font-bold text-lg">✕</button>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Precio</label>
+      <div class="flex items-center space-x-2">
+        <input id="precioMin" type="number" class="w-full border border-gray-300 rounded p-2 text-sm"
+          placeholder="Precio menor" />
+        <span>-</span>
+        <input id="precioMax" type="number" class="w-full border border-gray-300 rounded p-2 text-sm"
+          placeholder="Precio mayor" />
+      </div>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Tipo de producto</label>
+      <select class="w-full p-2 border border-gray-300 rounded text-sm">
+        <option value="">Todos</option>
+        <option value="bebida">Bebida</option>
+        <option value="comida">Comida</option>
+        <option value="golosina">Postre</option>
+        <option value="snack">Snack</option>
+        <option value="galletita">Galletitas</option>
+      </select>
+    </div>
+    <button class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded" id="btnAplicar">Aplicar
+      filtros</button>
+    <button onclick="restablecerFiltros()"
+      class="w-full mt-2 bg-gray-600 hover:bg-gray-700 text-white py-2 rounded">Restablecer filtros</button>
+  </aside>
+
+  <!-- Overlay para filtro -->
+  <div id="filtroOverlay" class="hidden fixed inset-0 bg-black bg-opacity-40 z-40" onclick="toggleFiltroMenu()"></div>
+
+  <!-- Botón del carrito -->
+  <button id="boton-carrito" onclick="irAlCarrito()"
+    class="fixed bottom-4 right-4 p-4 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 z-40"
+    style="transform: scale(0.9); transform-origin: bottom right;">
+    <i class="fas fa-shopping-cart text-xl"></i>
+    <span
+      class="absolute -top-2 -right-2 text-sm bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center"
+      id="cantidadCarrito">0</span>
+  </button>
+
+  <footer class="bg-gray-600 text-white mt-2 p-5 text-center">
+    <div class="text-sm">
+      © 2025 A.A.P.C - Todos los derechos reservados por copyright
+    </div>
+    <div class="mt-2 text-xs">
+      <a class="hover:underline" onclick="abrirModal('privacidad')">Política de Privacidad</a> |
+      <a class="hover:underline" onclick="abrirModal('terminos')">Términos y Condiciones</a> |
+      <a href="client/contacto/contacto.html" class="hover:underline">Contacto</a>
+    </div>
+  </footer>
+
+  <!-- Modal genérico full pantalla -->
+  <div id="modalInfo" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+    <div class="bg-white w-full h-full relative p-6 flex flex-col">
+
+      <!-- Botón cerrar: fijado arriba, fuera del scroll -->
+      <button onclick="cerrarModal()"
+        class="fixed top-4 right-6 text-2xl font-bold text-gray-600 hover:text-red-600 z-50 bg-white rounded-full p-1 shadow">
+        ✕
+      </button>
+
+      <!-- Título del modal -->
+      <h2 id="modalTitulo" class="text-3xl font-bold mb-6 text-blue-600 pr-10">Título</h2>
+
+      <!-- Contenido scrollable horizontal y vertical -->
+      <div id="modalContenido" class="flex-1 overflow-auto text-base text-gray-800 leading-relaxed min-w-full min-h-0">
+        <!-- Contenido dinámico insertado con JS -->
+      </div>
+
+    </div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
+  <!-- Footer (z-50 + relative para que se imponga sobre el botón) -->
+
+</body>
+
+</html>

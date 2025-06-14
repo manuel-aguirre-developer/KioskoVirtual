@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Perfil de Usuario</title>
+  <link href="../../General/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+  <!-- Mostrar datos del usuario -->
+  <div id="perfil" class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-md mt-6">
+      <!-- Botón para ir al index -->
+  <button onclick="window.location.href='../../index.html'" class="text-blue-600 font-bold text-lg">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+    <h1 class="text-3xl font-semibold text-center mb-6">Perfil de Usuario</h1>
+    <div id="usuarioDatos" class="space-y-4">
+      <!-- Los datos se cargarán aquí -->
+    </div>
+  </div>
+
+  <script src="perfil.js"></script>
+</body>
+</html>

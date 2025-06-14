@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Factura de Usuario</title>
+  <link href="../../General/tailwind.min.css" rel="stylesheet">
+  <script src="verPedidos.js" defer></script>
+</head>
+
+<body class="bg-gray-100">
+
+  <!-- Mostrar datos del usuario -->
+  <div id="perfil" class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-md mt-6">
+    <!-- Botón para ir al index -->
+    <button onclick="window.location.href='../../index.html'" class="text-blue-600 font-bold text-lg">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <h1 class="text-3xl font-semibold text-center mb-6">Tus pedidos</h1>
+    <!-- Spinner de carga (inicialmente oculto) -->
+    <div id="spinner" class="flex justify-center items-center my-6" style="display:none;">
+      <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+        viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <span class="Flex justify-center items-center ml-2 text-blue-600 font-semibold">Cargando pedidos...</span>
+    </div>
+    <!-- Botones de navegación entre vistas -->
+    <div id="botonesFiltro" class="flex justify-center gap-4 mb-6" style="display: none;">
+      <button onclick="mostrarPendientes()"
+        class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded">Pendientes</button>
+      <button onclick="mostrarEntregados()"
+        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Entregados</button>
+    </div>
+    <div id="usuarioDatos" class="space-y-4">
+      <!-- Los datos se cargarán aquí -->
+    </div>
+  </div>
+
+  <div id="modalDetalle" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg w-full max-w-2xl">
+      <h2 class="text-xl font-bold mb-4">Detalles del Pedido</h2>
+      <div id="detalleTexto" class="space-y-2 max-h-96 overflow-y-auto">
+        <!-- Se llena dinámicamente con texto -->
+      </div>
+      <div class="text-right mt-4">
+        <button id="cerrarModal" class="bg-red-500 text-white px-4 py-2 rounded">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalLogin" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-white p-6 rounded-lg w-96 relative">
+      <button onclick="cerrarLoginModal()" class="absolute top-2 right-2 text-gray-500 text-xl">&times;</button>
+      <h2 class="text-xl font-semibold text-center mb-4">Debes iniciar sesión</h2>
+      <p class="text-center mb-4">Para ver tus pedidos, necesitas iniciar sesión.</p>
+      <div class="flex justify-center">
+        <button onclick="redirigirLogin()" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Iniciar
+          sesión</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- mierda para poder usar colores -->
+  <div class="hidden">
+    bg-emerald-200 bg-lime-200 bg-teal-200 bg-green-200 bg-blue-100 bg-yellow-100 bg-gray-100
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
+</body>
+
+</html>
