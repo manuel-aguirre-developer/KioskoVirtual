@@ -1,16 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Mis Rendimientos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="main.js" defer></script>
 </head>
+
 <body class="bg-gray-100 min-h-screen p-6">
-  <div class="max-w-7xl mx-auto space-y-10"> 
+  <div class="max-w-7xl mx-auto space-y-10">
     <!-- Encabezado -->
+    <!-- Botón centrado arriba -->
+    <div class="flex justify-center mb-4">
+      <button id="btnDescargarPDF" class="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700">
+        Descargar en PDF
+      </button>
+    </div>
     <header class="flex justify-between items-center">
       <h1 class="text-3xl font-bold text-gray-800">Mis Rendimientos</h1>
       <a href="../panel/panel.html"
@@ -22,6 +32,7 @@
       <div class="bg-white px-6 py-4 rounded-xl shadow hover:shadow-md transition">
         <h2 class="text-sm text-gray-500 mb-1">Ingresos Hoy</h2>
         <p id="dineroDeHoy" class="text-3xl font-extrabold">$0.00</p>
+        <p id="comparacionClick" class="text-3xl font-extrabold"></p>
       </div>
 
       <div class="bg-white px-6 py-4 rounded-xl shadow hover:shadow-md transition">
@@ -31,8 +42,9 @@
           Total generado en efectivo: $0.00
         </div>
       </div>
-
-      <div class="bg-white px-6 py-4 rounded-xl shadow hover:shadow-md transition col-span-1 sm:col-span-2 lg:col-span-2">
+      
+      <div
+        class="bg-white px-6 py-4 rounded-xl shadow hover:shadow-md transition col-span-1 sm:col-span-2 lg:col-span-2">
         <label for="filtro" class="block text-sm text-gray-500 mb-2">Filtrar por</label>
         <select id="filtro"
           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300">

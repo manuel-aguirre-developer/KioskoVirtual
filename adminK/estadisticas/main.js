@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
     .catch(() => location.href = '../../index.html');
-
   const filtroSelect = document.getElementById('filtro');
   const mychart = document.getElementById("GraficoVentas");
   let graficoVentas; // Referencia al gráfico Chart.js
@@ -19,12 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!response.ok) throw new Error("Error en la respuesta del servidor");
         return response.json();
       })
-     .then(data => {
-    if (!Array.isArray(data.datos)) throw new Error("Datos inválidos para el gráfico");
+      .then(data => {
+        if (!Array.isArray(data.datos)) throw new Error("Datos inválidos para el gráfico");
 
-    const clases = data.datos.map(item => item.tipo);
-    const dinero = data.datos.map(item => parseFloat(item.total_generado));
-    const totalGlobal = dinero.reduce((acc, val) => acc + val, 0);
+        const clases = data.datos.map(item => item.tipo);
+        const dinero = data.datos.map(item => parseFloat(item.total_generado));
+        const totalGlobal = dinero.reduce((acc, val) => acc + val, 0);
 
         const totalGeneradoEl = document.getElementById('totalGenerado');
         if (totalGeneradoEl) {
@@ -73,50 +72,76 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const cargarPagosPorPeriodo = (periodo) => {
-    fetch(`estadisticas_por_pago.php?periodo=${periodo}`)
-      .then(response => response.json())
-      .then(data => {
-        const containerHoy = document.getElementById('dineroDeHoy');
-        const contenedorPago = document.getElementById('resumenPagos');
+  fetch(`estadisticas_por_pago.php?periodo=${periodo}`)
+    .then(response => response.json())
+    .then(data => {
+      const containerHoy = document.getElementById('dineroDeHoy');
+      const comparacionClick = document.getElementById('comparacionClick');
+      const contenedorPago = document.getElementById('resumenPagos');
+      if (!containerHoy || !comparacionClick || !contenedorPago) return;
 
-        if (!containerHoy || !contenedorPago) {
-          console.warn("Contenedores de pagos no encontrados en el DOM");
-          return;
-        }
+      let efectivo = 0;
+      let transferencia = 0;
 
-        let efectivo = 0;
-        let transferencia = 0;
+      if (Array.isArray(data.pagos)) {
+        data.pagos.forEach(item => {
+          if (item.pago_en === 'efectivo') efectivo = parseFloat(item.total_pago);
+          else if (item.pago_en === 'transferencia') transferencia = parseFloat(item.total_pago);
+        });
+      }
 
-        if (Array.isArray(data.pagos)) {
-          data.pagos.forEach(item => {
-            if (item.pago_en === 'efectivo') efectivo = parseFloat(item.total_pago);
-            else if (item.pago_en === 'transferencia') transferencia = parseFloat(item.total_pago);
-          });
-        }
+      totalGeneradoActual = data.total_generado || 0;
 
-        containerHoy.innerHTML = `
-          <span class="text-gray-700">Dinero generado hoy: </span>
-          <span class="text-green-600 font-bold">$${(data.total_hoy || 0).toFixed(2)}</span>
+      const totalActual = data.total_generado || 0;
+      const totalPasado = data.total_pasado || 0;
+
+      if (totalPasado > 0) {
+        const porcentaje = ((totalActual - totalPasado) / totalPasado) * 100;
+        const simbolo = porcentaje >= 0 ? '▲' : '▼';
+        const clase = porcentaje >= 0 ? 'text-green-600' : 'text-red-600';
+
+        let textoComparacion = '';
+        if (periodo === 'semana') textoComparacion = 'la semana pasada';
+        else if (periodo === 'mes') textoComparacion = 'el mes pasado';
+        else textoComparacion = '';
+
+        comparacionClick.innerHTML = `
+          <div class="mt-2">
+            <span class="text-gray-700">Comparado con ${textoComparacion}: </span>
+            <span id="porcentajeClick" class="${clase} font-bold cursor-pointer underline">${simbolo} ${Math.abs(porcentaje).toFixed(2)}%</span>
+          </div>
         `;
 
-        const efectivoDiv = document.createElement('div');
-        efectivoDiv.innerHTML = `
-          <span class="text-gray-700">Efectivo: </span>
-          <span class="text-green-600 font-bold">$${efectivo.toFixed(2)}</span>
-        `;
+        const toggleSpan = document.getElementById('porcentajeClick');
+        let mostrandoPorcentaje = true;
 
-        const transferenciaDiv = document.createElement('div');
-        transferenciaDiv.innerHTML = `
-          <span class="text-gray-700">Transferencia: </span>
-          <span class="text-green-600 font-bold">$${transferencia.toFixed(2)}</span>
-        `;
+        toggleSpan.onclick = () => {
+          if (mostrandoPorcentaje) {
+            toggleSpan.textContent = `$${totalPasado.toFixed(2)}`;
+            toggleSpan.className = 'text-green-600 font-bold cursor-pointer'; // verde y sin underline
+          } else {
+            toggleSpan.textContent = `${simbolo} ${Math.abs(porcentaje).toFixed(2)}%`;
+            toggleSpan.className = `${clase} font-bold cursor-pointer underline`;
+          }
+          mostrandoPorcentaje = !mostrandoPorcentaje;
+        };
 
-        contenedorPago.innerHTML = '';
-        contenedorPago.appendChild(efectivoDiv);
-        contenedorPago.appendChild(transferenciaDiv);
-      })
-      .catch(error => console.error("Error al cargar datos de pagos:", error));
-  };
+      } else {
+        comparacionClick.innerHTML = `<div class="mt-2 text-gray-500 italic">Sin datos del período anterior</div>`;
+      }
+
+      containerHoy.innerHTML = `
+        <span class="text-gray-700">Dinero generado hoy: </span>
+        <span class="text-green-600 font-bold">$${(data.total_hoy || 0).toFixed(2)}</span>
+      `;
+
+      contenedorPago.innerHTML = `
+        <div><span class="text-gray-700">Efectivo: </span><span class="text-green-600 font-bold">$${efectivo.toFixed(2)}</span></div>
+        <div><span class="text-gray-700">Transferencia: </span><span class="text-green-600 font-bold">$${transferencia.toFixed(2)}</span></div>
+      `;
+    })
+    .catch(error => console.error("Error al cargar datos de pagos:", error));
+};
 
   const cargarTopProductos = (periodo) => {
     fetch(`tops_productos.php?periodo=${periodo}`)
@@ -168,6 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const actualizarEstadisticas = (periodo) => {
+    periodoSeleccionado = periodo; // 🔥 Actualizar global
     cargarGraficoPorTipo(periodo);
     cargarPagosPorPeriodo(periodo);
     cargarTopProductos(periodo);
@@ -177,7 +203,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const periodo = filtroSelect.value;
     actualizarEstadisticas(periodo);
   });
+  actualizarEstadisticas(filtroSelect.value); // carga inicial
+});
+document.getElementById('btnDescargarPDF').addEventListener('click', () => {
+  const { jsPDF } = window.jspdf;
 
-  // Carga inicial
-  actualizarEstadisticas(filtroSelect.value);
+  const elemento = document.body; // Podés cambiarlo a otro contenedor si querés solo parte
+
+  html2canvas(elemento, {
+    scrollY: -window.scrollY, // Captura desde arriba
+    scale: 2 // Mejora calidad
+  }).then(canvas => {
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'pt',
+      format: 'a4'
+    });
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgProps = pdf.getImageProperties(imgData);
+    const imgWidth = pageWidth;
+    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+    let position = 0;
+
+    if (imgHeight < pageHeight) {
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+    } else {
+      // Si se pasa de una hoja
+      let heightLeft = imgHeight;
+      while (heightLeft > 0) {
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        if (heightLeft > 0) {
+          pdf.addPage();
+          position = -pageHeight;
+        }
+      }
+    }
+
+    pdf.save("rendimiento.pdf");
+  });
 });
