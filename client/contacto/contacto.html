@@ -94,20 +94,21 @@
 
       <!-- Badge Disponible -->
       <div
-        class="absolute top-4 right-4 bg-green-200 text-green-800 text-xs px-3 py-1 rounded-full font-semibold shadow-md animate-pulse">
+        class="absolute top-4 right-4 flex items-center gap-2 bg-green-200 text-green-800 text-xs px-3 py-1 rounded-full font-semibold shadow-md animate-pulse">
+        <i class="fas fa-circle text-green-500 text-[8px]"></i>
         Disponible
       </div>
 
       <!-- Imagen con evento para abrir modal -->
       <img id="thiago-photo" src="img/thiago.webp" alt="Foto de perfil de Thiago Avalos"
-        class="w-40 h-40 sm:w-52 sm:h-52 rounded-full object-cover mx-auto mb-4 sm:mb-6 cursor-pointer transition-shadow hover:shadow-xl" />
+        class="w-40 h-40 sm:w-52 sm:h-52 rounded-full object-cover mx-auto mb-4 sm:mb-6 cursor-pointer transition-shadow hover:shadow-xl transition-transform duration-500 ease-in-out hover:rotate-1 hover:scale-105" />
 
       <!-- Nombre y rol -->
       <h2 class="text-2xl sm:text-3xl font-semibold mb-1">Thiago Avalos, 18</h2>
 
       <!-- Títulos principales -->
       <p class="text-lg sm:text-xl text-indigo-700 font-semibold mb-2 tracking-wide">
-        Developer Fullstack · Diseñador de Frontend
+        Developer Fullstack · Frontend Designer
       </p>
 
       <!-- Bio extendida un poco -->
@@ -134,17 +135,23 @@
           <i class="fab fa-instagram"></i>
         </a>
       </div>
-
-      <!-- Stats Badges -->
+      
+      <!-- Stats Técnicos Premium -->
       <div class="flex justify-center space-x-3">
         <span
-          class="bg-indigo-100 text-indigo-700 text-xs px-4 py-1 rounded-full font-semibold tracking-wide">Arquitecto
-          Fullstack</span>
-        <span class="bg-yellow-100 text-yellow-700 text-xs px-4 py-1 rounded-full font-semibold tracking-wide">Líder
-          Estratégico</span>
-        <span class="bg-red-100 text-red-700 text-xs px-4 py-1 rounded-full font-semibold tracking-wide">Optimizador de
-          Procesos</span>
+          class="bg-indigo-100 text-indigo-700 text-xs px-4 py-1 rounded-full font-semibold tracking-wide transition-all duration-300 hover:bg-indigo-200 hover:scale-105">
+          Arquitectura Fullstack
+        </span>
+        <span
+          class="bg-green-100 text-green-700 text-xs px-4 py-1 rounded-full font-semibold tracking-wide transition-all duration-300 hover:bg-indigo-200 hover:scale-105">
+          Ingeniería de Software
+        </span>
+        <span
+          class="bg-red-100 text-red-600 text-xs px-4 py-1 rounded-full font-semibold tracking-wide transition-all duration-300 hover:bg-indigo-200 hover:scale-105">
+          Liderazgo Técnico
+        </span>
       </div>
+
     </div>
 
     <!-- Modal Lightbox para imagen ampliada -->
