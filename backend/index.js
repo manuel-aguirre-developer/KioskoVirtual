@@ -172,7 +172,7 @@ wss.on('connection', (ws) => {
     clearInterval(pedidosInterval);
   });
 });
-
+ 
 // Iniciar servidor
 server.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);

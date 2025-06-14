@@ -64,25 +64,35 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Cargar abono guardado (antes era montoIngresado)
   const abonoGuardado = localStorage.getItem("abono");
-  if (abonoGuardado) {
-    inputAbono.value = abonoGuardado;
-    const abono = parseFloat(abonoGuardado);
-    if (!isNaN(abono) && abono >= total) {
-      btnComprar.classList.remove("hidden");
-    }
+if (abonoGuardado) {
+  inputAbono.value = abonoGuardado;
+  const abono = parseFloat(abonoGuardado);
+  console.log("Abono guardado:", abonoGuardado);
+  console.log("Abono guardado parseado:", abono);
+  if (!isNaN(abono) && abono >= total) {
+    btnComprar.classList.remove("hidden");
+    console.log("Botón mostrado al cargar");
   }
+}
 
-  // Escuchar cambios en el input
-  inputAbono.addEventListener("input", () => {
-    const abono = parseFloat(inputAbono.value);
-    localStorage.setItem("abono", inputAbono.value);
 
-    if (!isNaN(abono) && abono >= total) {
-      btnComprar.classList.remove("hidden");
-    } else {
-      btnComprar.classList.add("hidden");
-    }
-  });
+inputAbono.addEventListener("input", () => {
+  const abono = parseFloat(inputAbono.value);
+  console.log("Input abono:", inputAbono.value);
+  console.log("Abono parseado:", abono);
+  console.log("Total:", total);
+
+  localStorage.setItem("abono", inputAbono.value);
+
+  if (!isNaN(abono) && abono >= total) {
+    btnComprar.classList.remove("hidden");
+    console.log("Botón mostrar");
+  } else {
+    btnComprar.classList.add("hidden");
+    console.log("Botón ocultar");
+  }
+});
+
 
   // Modales
   const modalConfirmacion = document.getElementById("modalConfirmacion");
