@@ -167,7 +167,7 @@ inputAbono.addEventListener("input", () => {
   if (btnCerrarConfirmacion) {
     btnCerrarConfirmacion.addEventListener("click", () => {
       modalConfirmacionCompra.classList.add("hidden");
-      window.location.href = "../../index.html";
+      window.location.href = "../verPedidos/verPedidos.html";
     });
   }
 });

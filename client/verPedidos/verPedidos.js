@@ -136,53 +136,59 @@ function cargarDetallesPedido(idVenta) {
   const detalleTexto = document.getElementById('detalleTexto');
 
   fetch(`http://localhost/kioskoTecnica4/client/verPedidos/detalles_venta.php?id_venta=${idVenta}`)
-    .then(response => {
-      if (!response.ok) throw new Error('Error al obtener los detalles');
-      return response.json();
-    })
-    .then(data => {
-      detalleTexto.innerHTML = '';
+  .then(response => {
+    if (!response.ok) throw new Error('Error al obtener los detalles');
+    return response.json();
+  })
+  .then(data => {
+    detalleTexto.innerHTML = '';
 
-      if (data.length === 0) {
-        detalleTexto.innerHTML = `<p class="text-gray-500">Sin detalles para este pedido.</p>`;
-      } else {
+    if (data.length === 0) {
+      detalleTexto.innerHTML = `<p class="text-gray-500">Sin detalles para este pedido.</p>`;
+    } else {
 
-        const metodoPago = data[0].pago_en || 'N/A';
-        const mensaje = data[0].mensaje || 'No mandaste ningún mensaje.';
+      const metodoPago = data[0].pago_en || 'N/A';
+      const mensaje = data[0].mensaje || 'No mandaste ningún mensaje.';
+      const abono = data[0].abono || '0.00';
 
-        const infoExtra = document.createElement('div');
-        infoExtra.innerHTML = `
-          <p class="mb-2 text-sm"><strong>Método de pago:</strong> ${metodoPago}</p>
-          <p class="mb-4 text-sm"><strong>Mensaje personalizado:</strong> ${mensaje}</p>
+      // Calculamos vuelto (abono - suma de subtotales)
+      const totalSubtotal = data.reduce((acc, item) => acc + parseFloat(item.subtotal), 0);
+      const vuelto = (parseFloat(abono) - totalSubtotal).toFixed(2);
+
+      const infoExtra = document.createElement('div');
+      infoExtra.innerHTML = `
+        <p class="mb-2 text-sm"><strong>Método de pago:</strong> ${metodoPago}</p>
+        <p class="mb-2 text-sm"><strong>Mensaje personalizado:</strong> ${mensaje}</p>
+        <p class="mb-2 text-sm"><strong>Pagaste con:</strong> $${parseFloat(abono).toFixed(2)}</p>
+        <p class="mb-4 text-sm"><strong>Vuelto a recibir:</strong> $${vuelto}</p>
+      `;
+      detalleTexto.appendChild(infoExtra);
+
+      const lista = document.createElement('ul');
+      lista.classList.add('list-disc', 'ml-4');
+
+      data.forEach(detalle => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <p><strong>ID:</strong> ${detalle.id_producto}</p> 
+          <p><strong>Producto que llevas:</strong> ${detalle.nombre_producto}</p>
+          <p><strong>Cantidad que llevas:</strong> ${detalle.cantidad}</p>
+          <p><strong>Subtotal:</strong> $${parseFloat(detalle.subtotal).toFixed(2)}</p>
         `;
-        detalleTexto.appendChild(infoExtra);
+        li.classList.add('mb-2', 'border', 'p-2', 'rounded', 'bg-gray-50');
+        lista.appendChild(li);
+      });
 
-        const lista = document.createElement('ul');
-        lista.classList.add('list-disc', 'ml-4');
+      detalleTexto.appendChild(lista);
+    }
 
-        data.forEach(detalle => {
-          const li = document.createElement('li');
-          li.innerHTML = `
-            <p><strong>ID:</strong> ${detalle.id_producto}</p> 
-            <p><strong>Producto que llevas:</strong> ${detalle.nombre_producto}</p>
-            <p><strong>Cantidad que llevas:</strong> ${detalle.cantidad}</p>
-            <p><strong>Subtotal:</strong> $${parseFloat(detalle.subtotal).toFixed(2)}</p>
-            <p><strong>Abono:</strong> $${detalle.abono}</p>
-            <p><strong>Vuelto a recibir:</strong> $${(parseFloat(detalle.abono) - parseFloat(detalle.subtotal)).toFixed(2)}</p>
-          `;
-          li.classList.add('mb-2', 'border', 'p-2', 'rounded', 'bg-gray-50');
-          lista.appendChild(li);
-        });
+    modal.classList.remove('hidden');
+  })
+  .catch(error => {
+    detalleTexto.innerHTML = `<p class="text-red-500">Error al cargar detalles: ${error.message}</p>`;
+    modal.classList.remove('hidden');
+  });
 
-        detalleTexto.appendChild(lista);
-      }
-
-      modal.classList.remove('hidden');
-    })
-    .catch(error => {
-      detalleTexto.innerHTML = `<p class="text-red-500">Error al cargar detalles: ${error.message}</p>`;
-      modal.classList.remove('hidden');
-    });
 }
 
 function cerrarLoginModal() {
