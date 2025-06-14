@@ -21,49 +21,53 @@
   </header>
 
   <main class="p-4">
-    <!-- Formulario de usuario -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-      <h3 class="text-xl font-semibold mb-4">Información del Usuario</h3>
+    <form id="formCompra">
+      <!-- Formulario de usuario -->
+      <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <h3 class="text-xl font-semibold mb-4">Información del Usuario</h3>
 
-      <label for="id" class="block text-lg font-medium mb-2">ID Usuario:</label>
-      <input type="text" id="id" name="id" class="w-full p-3 mb-4 border border-gray-300 rounded-md" readonly>
-      
-      <label for="usuario" class="block text-lg font-medium mb-2">Nombre:</label>
-      <input type="text" id="usuario" name="usuario" class="w-full p-3 mb-4 border border-gray-300 rounded-md" readonly>
+        <label for="id" class="block text-lg font-medium mb-2">ID Usuario:</label>
+        <input type="text" id="id" name="id" class="w-full p-3 mb-4 border border-gray-300 rounded-md" readonly>
 
-      <label for="email" class="block text-lg font-medium mb-2">Correo:</label>
-      <input type="email" id="email" name="email" class="w-full p-3 mb-4 border border-gray-300 rounded-md" readonly>
+        <label for="usuario" class="block text-lg font-medium mb-2">Nombre:</label>
+        <input type="text" id="usuario" name="usuario" class="w-full p-3 mb-4 border border-gray-300 rounded-md" readonly>
 
-      <label for="curso" class="block text-lg font-medium mb-2">Curso:</label>
-      <input type="text" id="curso" name="curso" class="w-full p-3 mb-4 border border-gray-300 rounded-md" readonly>
-    </div>
+        <label for="email" class="block text-lg font-medium mb-2">Correo:</label>
+        <input type="email" id="email" name="email" class="w-full p-3 mb-4 border border-gray-300 rounded-md" readonly>
 
-    <!-- Productos -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-      <h3 class="text-xl font-semibold mb-4">Productos Seleccionados</h3>
-      <div id="productos" class="mb-4">
-        <!-- Productos se insertan por JS -->
+        <label for="curso" class="block text-lg font-medium mb-2">Curso:</label>
+        <input type="text" id="curso" name="curso" class="w-full p-3 mb-4 border border-gray-300 rounded-md" readonly>
       </div>
-    </div>
 
-    <!-- Total -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-      <h3 class="text-xl font-semibold mb-4">Total de la Compra</h3>
-      <p id="total" class="text-xl font-bold text-green-600">$0.00</p>
-    </div>
+      <!-- Productos -->
+      <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <h3 class="text-xl font-semibold mb-4">Productos Seleccionados</h3>
+        <div id="productos" class="mb-4">
+          <!-- Productos se insertan por JS -->
+        </div>
+      </div>
 
-   <!-- Monto a pagar -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-       <label for="abono" class="block text-lg font-medium mb-2">Con cuanto va abonar:</label>
-      <input type="text" id="abono" name="abono" placeholder="Ingrese cantidad a abonar" class="w-full p-3 mb-4 border-2 border-gray-500 rounded-md" required>
-    </div>
+ <!-- Total -->
+      <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <h3 class="text-xl font-semibold mb-4">Total de la Compra</h3>
+        <p id="total" class="text-xl font-bold text-green-600">$0.00</p>
+      </div>
 
-    <!-- Botón de comprar -->
-    <div class="flex justify-center">
-      <button id="btnComprar" class=" hidden bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md transition">
-        Comprar
-      </button>
-    </div>
+      <!-- Monto a pagar -->
+      <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <label for="MontoPagar" class="block text-lg font-medium mb-2">Con cuánto va a abonar:</label>
+        <input type="number" id="MontoPagar" name="MontoPagar" placeholder="Ingrese cantidad a abonar"
+               class="w-full p-3 mb-4 border-2 border-gray-500 rounded-md"
+               required min="1" step="any">
+      </div>
+
+      <!-- Botón de comprar -->
+      <div class="flex justify-center">
+        <button type="submit" id="btnComprar" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md transition">
+          Comprar
+        </button>
+      </div>
+    </form>
   </main>
 
   <!-- Modal de confirmación de compra -->
