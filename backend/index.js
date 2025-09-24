@@ -36,10 +36,10 @@ paymentController.initSockets(wss);
 
 // Conexión MySQL
 const db = mysql.createConnection({
-  host: '138.219.42.29',   // IP o dominio de tu servidor cloud
+  host: 'localhost',   // IP o dominio de tu servidor cloud
   port: 3306,              // puerto MySQL (normalmente 3306)
-  user: 'kiosko_user',     // usuario que creaste con acceso remoto
-  password: 'aapc',        // contraseña correcta
+  user: 'root',     // usuario que creaste con acceso remoto
+  password: 'biblioteca4',        // contraseña correcta
   database: 'kiosko'
 });
 
