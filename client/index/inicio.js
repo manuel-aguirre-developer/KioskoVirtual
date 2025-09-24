@@ -27,7 +27,7 @@ function mostrarSplash() {
 function cargarTextoBienvenida() {
   let textoBienvenida = "Kiosko Virtual";
 
-  fetch('http://localhost/kioskoTecnica4/client/login/obtener_usuario.php')
+  fetch('https://kioskotecnica4.com/client/login/obtener_usuario.php')
     .then(response => response.json())
     .then(data => {
       if (data.logueado) {
@@ -40,7 +40,7 @@ function cargarTextoBienvenida() {
       }
     })
     .catch(error => {
-      console.error('Error al verificar sesión:', error);
+      console.error('Error al verificar sesiÃ³n:', error);
     })
     .finally(() => {
       bienvenidoText.classList.add(
@@ -72,6 +72,8 @@ window.addEventListener("load", () => {
     ocultarSplash();
   }
 });
+
+
 //POR SI NO FUNCIONA EN CELU ELIMINAR LO DE ARRIBA Y PEGAR LO DE ABAJOOO CUIDADO
 // const logo = document.getElementById("logo");  
 // const bienvenidoText = document.getElementById("bienvenido");
@@ -92,22 +94,22 @@ window.addEventListener("load", () => {
 //   // Cargar texto bienvenida y animarlo
 //   cargarTextoBienvenida();
 
-//   // Después de mostrar splash, hacer fade out y mostrar contenido
+//   // DespuÃ©s de mostrar splash, hacer fade out y mostrar contenido
 //   setTimeout(() => {
 //     splash.classList.add("fade-out");
 //     contenido.classList.add("visible");
 
 //     setTimeout(() => {
 //       splash.style.display = "none"; // Ocultar completamente splash
-//       localStorage.setItem("splashShown", "true"); // Guardar para no mostrar más
+//       localStorage.setItem("splashShown", "true"); // Guardar para no mostrar mÃ¡s
 //     }, 1000);
 //   }, 4500);
 // }
 
 // function cargarTextoBienvenida() {
-//   let textoBienvenida = "Kiosko Virtual"; // default si no está logueado
+//   let textoBienvenida = "Kiosko Virtual"; // default si no estÃ¡ logueado
 
-//   fetch('http://localhost/kioskoTecnica4/client/login/obtener_usuario.php')
+//   fetch('https://kioskotecnica4.com/client/login/obtener_usuario.php')
 //     .then(response => response.json())
 //     .then(data => {
 //       if (data.logueado) {
@@ -122,7 +124,7 @@ window.addEventListener("load", () => {
 //       }
 //     })
 //     .catch(error => {
-//       console.error('Error al verificar sesión:', error);
+//       console.error('Error al verificar sesiÃ³n:', error);
 //     })
 //     .finally(() => {
 //       bienvenidoText.classList.add(
@@ -155,16 +157,53 @@ window.addEventListener("load", () => {
 //   const splashShown = localStorage.getItem("splashShown");
 
 //   if (splashShown === "true") {
-//     // Si ya se mostró el splash alguna vez, ocultar directo sin animación
+//     // Si ya se mostrÃ³ el splash alguna vez, ocultar directo sin animaciÃ³n
 //     ocultarSplashDirecto();
 //   } else {
-//     // Mostrar splash con animación
+//     // Mostrar splash con animaciÃ³n
 //     mostrarSplash();
 //   }
 // });
 
 // Conectar al WebSocket del servidor
-const socket = new WebSocket('ws://localhost:3006');
+// ?? Conectar al WebSocket del servidor
+
+const spinner = document.getElementById('spinner');
+
+// ?? Pantalla negra si la IP o fingerprint está baneado
+function bloquearPorIP() {
+  document.body.innerHTML = '';
+  document.body.style.backgroundColor = '#000';
+}
+
+// ? Modal si el usuario está baneado por ID
+function bloquearUsuarioBaneadoUI(idUsuario) {
+  document.getElementById('catalogo').innerHTML = '';
+
+  const carritoBtn = document.querySelector('#boton-carrito');
+  const hamburguesaBtn = document.querySelector('#hamburguesa');
+  const verMasBtn = document.getElementById('verMas');
+
+  if (carritoBtn) carritoBtn.style.display = 'none';
+  if (hamburguesaBtn) hamburguesaBtn.style.display = 'none';
+  if (verMasBtn) verMasBtn.classList.add('hidden');
+
+  const modal = document.createElement('div');
+  modal.innerHTML = `
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+      <div style="background: white; padding: 2rem; border-radius: 8px; max-width: 400px; text-align: center;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">?? Usuario Baneado</h2>
+        <p>Tu ID de usuario es: <strong>${idUsuario}</strong></p>
+        <p style="margin-top: 1rem;">Deberás comunicarte con el kiosko para resolver esta situación.</p>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+// ?? WebSocket para productos
+const socket = new WebSocket('wss://kioskotecnica4.com/ws');
 
 socket.onopen = () => {
   console.log('Conectado al servidor WebSocket para productos');
@@ -172,11 +211,10 @@ socket.onopen = () => {
 
 socket.onmessage = (event) => {
   const data = JSON.parse(event.data);
-
   if (data.tipo === 'productos') {
     window.productos = data.productos;
     indiceProducto = 0;
-    productosCargados = true;  // ✅ Activa la bandera
+    productosCargados = true;
     document.getElementById('catalogo').innerHTML = '';
     cargarCatalogo();
   }
@@ -184,80 +222,74 @@ socket.onmessage = (event) => {
 
 socket.onclose = () => {
   console.log('Conexión WebSocket cerrada');
-  spinner.style.display = 'none';
-  document.getElementById('catalogo').innerHTML = '';  // <-- limpiar catálogo
+  if (spinner) spinner.style.display = 'none';
+  document.getElementById('catalogo').innerHTML = '';
   document.getElementById('sinProductos').classList.remove('hidden');
   document.getElementById('verMas').classList.add('hidden');
+  document.getElementById('boton-carrito').classList.add('hidden');
+  document.getElementById('tiendaCerrada').classList.add('hidden');
 };
 
 socket.onerror = (error) => {
   console.error('Error en WebSocket:', error);
-  spinner.style.display = 'none';
-  document.getElementById('catalogo').innerHTML = '';  // <-- limpiar catálogo
+  if (spinner) spinner.style.display = 'none';
+  document.getElementById('catalogo').innerHTML = '';
   document.getElementById('sinProductos').classList.remove('hidden');
-  document.getElementById('verMas').classList.add('hidden');//boton puto aparece en todos lados
-
+  document.getElementById('verMas').classList.add('hidden');
+  document.getElementById('boton-carrito').classList.add('hidden');
+  document.getElementById('tiendaCerrada').classList.add('hidden');
 };
-// Primero obtienes datos del usuario (sin baneado aún)
-fetch('http://localhost/kioskoTecnica4/client/login/obtener_usuario.php')
-  .then(response => response.json())
+
+// ?? Obtener fingerprint (si existe)
+const fingerprint = localStorage.getItem('fingerprint') || 'no_detectado';
+
+// ?? Verificar usuario y baneo por cookie + fingerprint
+fetch('https://kioskotecnica4.com/client/login/obtener_usuario.php', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  credentials: 'include',
+  cache: 'no-store'
+})
+  .then(async response => {
+    if (response.status === 403) {
+      bloquearPorIP(); // Esto cubre IP o fingerprint baneado
+      throw new Error('403 - funciona');
+    }
+
+    const data = await response.json();
+
+    if (data.error === 'IP baneada') {
+      bloquearPorIP();
+      throw new Error('Bloqueado (mensaje JSON)');
+    }
+
+    return data;
+  })
   .then(data => {
+
     const nombreUsuarioSpan = document.getElementById('nombreUsuario');
     const botonLogin = document.getElementById('botonlogin');
 
     if (data.logueado) {
-      if (nombreUsuarioSpan) {
-        nombreUsuarioSpan.textContent = data.usuario;
-      }
-      botonLogin.setAttribute('onclick', 'irAPerfil()');
+      if (nombreUsuarioSpan) nombreUsuarioSpan.textContent = data.usuario;
+      if (botonLogin) botonLogin.setAttribute('onclick', 'irAPerfil()');
 
-      // Ahora verificamos si está baneado haciendo una segunda petición con su ID
-      fetch(`http://localhost/kioskoTecnica4/client/login/obtenerBaneo.php?id=${data.id_usuario}`)
+      // Verificar si está baneado por ID
+      fetch(`https://kioskotecnica4.com/client/login/obtenerBaneo.php?id=${data.id_usuario}`)
         .then(response => response.json())
         .then(baneoData => {
-          if (baneoData.baneado) {
-            // Si está baneado, bloqueamos botones y mostramos modal
-            document.getElementById('catalogo').innerHTML = '';
-            const carritoBtn = document.querySelector('#boton-carrito');
-            const hamburguesaBtn = document.querySelector('#hamburguesa');
-            const verMasBtn = document.getElementById('verMas');
-
-            if (carritoBtn) carritoBtn.style.display = 'none';
-            if (hamburguesaBtn) hamburguesaBtn.style.display = 'none';
-            if (verMasBtn) verMasBtn.classList.add('hidden');
-
-            const modal = document.createElement('div');
-            modal.innerHTML = `
-              <div style="
-                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 9999;">
-                <div style="
-                  background: white; padding: 2rem; border-radius: 8px; max-width: 400px; text-align: center;">
-                  <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">🚫 Usuario Baneado</h2>
-                  <p>Tu ID de usuario es: <strong>${baneoData.id}</strong></p>
-                  <p style="margin-top: 1rem;">Deberás comunicarte con el kiosko para resolver esta situación.</p>
-                </div>
-              </div>
-            `;
-            document.body.appendChild(modal);
-          }
+          if (baneoData.baneado) bloquearUsuarioBaneadoUI(baneoData.id);
         })
-        .catch(err => {
-          console.error('Error al verificar baneo:', err);
-        });
-
+        .catch(err => console.error('Error al verificar baneo por ID:', err));
     } else {
-      if (nombreUsuarioSpan) {
-        nombreUsuarioSpan.textContent = 'Registrarse';
-      }
-      botonLogin.setAttribute('onclick', 'irALogin()');
+      if (nombreUsuarioSpan) nombreUsuarioSpan.textContent = 'Registrarse';
+      if (botonLogin) botonLogin.setAttribute('onclick', 'irALogin()');
     }
   })
   .catch(error => {
-    console.error('Error al verificar sesión:', error);
+    console.error('Error al verificar sesión o baneo:', error);
   });
 
-// Función para mostrar el menú lateral
 function toggleMenu() {
   const drawer = document.getElementById('menuDrawer');
   const overlay = document.getElementById('overlay');
@@ -275,6 +307,14 @@ function toggleMenu() {
   drawer.classList.toggle('translate-x-0');
   drawer.classList.toggle('translate-x-full');
   overlay.classList.toggle('hidden');
+
+  // Evitar scroll en body cuando el menú está abierto
+  const menuAbierto = drawer.classList.contains('translate-x-0');
+  if (menuAbierto) {
+    document.body.style.overflow = 'hidden';  // bloquea el scroll
+  } else {
+    document.body.style.overflow = '';        // desbloquea el scroll
+  }
 }
 
 function accionInicio() {
@@ -282,12 +322,80 @@ function accionInicio() {
 }
 
 function verPedidos() {
-  window.location.href = "http://localhost/kioskoTecnica4/client/verPedidos/verPedidos.html";
+  window.location.href = "https://kioskotecnica4.com/client/verPedidos/verPedidos.html";
 }
 
 function irAPerfil() {
-  // Redirige al usuario a la carpeta ../perfil
-  window.location.href = "http://localhost/kioskoTecnica4/client/perfil/index.html";
+  window.location.href = "https://kioskotecnica4.com/client/perfil/index.html";
+}
+// ?? VARIABLE GLOBAL PARA LA INSTALACIÓN PWA
+let deferredPrompt = null;
+
+/**
+ * Inicializa los eventos relacionados a la instalación de la PWA.
+ */
+function initDescargar() {
+  const btnDescargar = document.getElementById('btnDescargar');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    console.log('? PWA lista para instalar');
+
+    // Mostrar botón si está disponible
+    if (btnDescargar) {
+      btnDescargar.style.display = 'block';
+    }
+  });
+
+  window.addEventListener('appinstalled', () => {
+    console.log('?? PWA instalada correctamente');
+    deferredPrompt = null;
+    if (btnDescargar) {
+      btnDescargar.style.display = 'none';
+    }
+  });
+}
+
+/**
+ * Ejecuta el prompt de instalación de la PWA.
+ */
+function descargar() {
+  if (!deferredPrompt) {
+    alert('?? La instalación no está disponible en este momento.');
+    return;
+  }
+
+  deferredPrompt.prompt();
+
+  deferredPrompt.userChoice.then((choiceResult) => {
+    if (choiceResult.outcome === 'accepted') {
+      console.log('?? Usuario aceptó la instalación');
+    } else {
+      console.log('?? Usuario rechazó la instalación');
+    }
+    deferredPrompt = null;
+  });
+}
+
+// ?? Esperar a que el DOM cargue completamente
+window.addEventListener('DOMContentLoaded', () => {
+  initDescargar();
+
+  const btnDescargar = document.getElementById('btnDescargar');
+  if (btnDescargar) {
+    btnDescargar.addEventListener('click', descargar);
+    btnDescargar.style.display = 'none'; // Ocultar inicialmente hasta que esté listo
+  }
+});
+
+// ?? Compatibilidad con onclick HTML directo
+window.descargar = descargar;
+
+
+function irAyuda() {
+  // AquÃ­ pones la acciÃ³n que quieras, por ejemplo redirigir a otra pÃ¡gina:
+  window.location.href = "client/ayuda/ayuda.html"; // Cambia la ruta segÃºn tu archivo
 }
 
 function contactarse() {
@@ -323,24 +431,24 @@ window.addEventListener('resize', ajustarBotonCarrito);
 
 
 function accionCerrarSesion() {
-  fetch('http://localhost/kioskoTecnica4/client/login/obtener_usuario.php')  // Asegúrate de que esta ruta sea correcta
+  fetch('https://kioskotecnica4.com/client/login/obtener_usuario.php')  // AsegÃºrate de que esta ruta sea correcta
     .then(response => response.json())
     .then(data => {
       if (!data.logueado) {
-        // Si no está logueado, muestra un mensaje de error
+        // Si no estÃ¡ logueado, muestra un mensaje de error
         const noti = document.getElementById("notificacion");
-        noti.innerHTML = "<span>No se puede cerrar sesión porque aún no se ha iniciado sesión.</span>";
+        noti.innerHTML = "<span>No se puede cerrar sesiÃ³n porque aÃºn no se ha iniciado sesiÃ³n.</span>";
         noti.classList.add("mostrar");
         setTimeout(() => {
           noti.classList.remove("mostrar");
         }, 4000);
       } else {
-        // Si está logueado, redirige al servidor para cerrar sesión
-        window.location.href = "http://localhost/kioskoTecnica4/client/login/cerrarsesion.php";
+        // Si estÃ¡ logueado, redirige al servidor para cerrar sesiÃ³n
+        window.location.href = "https://kioskotecnica4.com/client/login/cerrarsesion.php";
       }
     })
     .catch(error => {
-      console.error('Error al verificar sesión:', error);
+      console.error('Error al verificar sesiÃ³n:', error);
     });
 }
 
@@ -352,13 +460,14 @@ function irALogin() {
   window.location.href = "client/login/login.html";
 }
 
-window.productos = [];  // Array que almacenará todos los productos
-let indiceProducto = 0;  // Indice para controlar qué productos se muestran
-let cantProductos = 16;  // Cantidad de productos que se muestran en la página (usar numeros pares para evitar problemas de diseño
+window.productos = [];  // Array que almacenarÃ¡ todos los productos
+let indiceProducto = 0;  // Indice para controlar quÃ© productos se muestran
+let cantProductos = 24;  // Cantidad de productos que se muestran en la pÃ¡gina (usar numeros pares para evitar problemas de diseÃ±o
 
 //TODO ESTO ES PARA EVITAR EL PARPADEO DE SPINNER; NO HAY PRODUCTOS ; SPINNER
 let productosCargados = false; // Bandera global para controlar si ya llegaron los productos
 document.addEventListener('DOMContentLoaded', () => {
+  initDescargar();
   document.getElementById('verMas').classList.add('hidden');//oculto boton ver mas q veia al principio de recargar
   spinner.style.display = 'flex'; //oculto siempre por defecto el boton ver mas
   const carritoBtn = document.querySelector('#boton-carrito');//oculto por defecto el boton carrito 
@@ -366,25 +475,27 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function cargarCatalogo() {
-  if (!productosCargados) return; // Detener si los productos aún no han llegado
+  if (!productosCargados) return; // Detener si los productos aÃºn no han llegado
 
   const catalogo = document.getElementById('catalogo');
   const spinner = document.getElementById('spinner');
   const verMasBtn = document.getElementById('verMas');
   const sinProductos = document.getElementById('sinProductos');
+  const tiendaCerrada = document.getElementById('tiendaCerrada');
   const carritoBtn = document.querySelector('#boton-carrito');
 
-  // 🟡 Mostrar el spinner y ocultar el botón mientras carga
+  // ðŸŸ¡ Mostrar el spinner y ocultar el botÃ³n mientras carga
   spinner.style.display = 'flex';
-  verMasBtn.classList.add('hidden'); // ⬅️ OCULTAR BOTÓN
+  verMasBtn.classList.add('hidden'); // â¬…ï¸ OCULTAR BOTÃ“N
   sinProductos.classList.add('hidden');
+  tiendaCerrada.classList.add('hidden');
   carritoBtn.style.display = 'none';
 
-  await new Promise(resolve => setTimeout(resolve, 500)); // Simula una carga mínima
+  await new Promise(resolve => setTimeout(resolve, 500)); // Simula una carga mÃ­nima
 
   try {
     if (!window.productos || window.productos.length === 0) {
-      sinProductos.classList.remove('hidden');
+       tiendaCerrada.classList.remove('hidden');
       spinner.style.display = 'none';
       verMasBtn.classList.add('hidden');  
       return;
@@ -440,11 +551,11 @@ async function cargarCatalogo() {
       indiceProducto = i + 1;
     }
 
-    // ✅ Mostrar el botón solo si quedan productos por cargar
+    // âœ… Mostrar el botÃ³n solo si quedan productos por cargar
     if (indiceProducto < window.productos.length) {
-      verMasBtn.classList.remove('hidden'); // ⬅️ MOSTRAR BOTÓN SI AÚN HAY PRODUCTOS
+      verMasBtn.classList.remove('hidden'); // â¬…ï¸ MOSTRAR BOTÃ“N SI AÃšN HAY PRODUCTOS
     } else {
-      verMasBtn.classList.add('hidden'); // ⬅️ OCULTAR SI YA NO HAY MÁS
+      verMasBtn.classList.add('hidden'); // â¬…ï¸ OCULTAR SI YA NO HAY MÃS
     }
 
     spinner.style.display = 'none';
@@ -452,7 +563,7 @@ async function cargarCatalogo() {
     ajustarBotonCarrito();
 
   } catch (error) {
-    console.error('Error al cargar catálogo:', error);
+    console.error('Error al cargar catÃ¡logo:', error);
     spinner.style.display = 'none';
   }
 }
@@ -500,15 +611,15 @@ function filtrarCatalogo() {
   const botonVerMas = document.getElementById('verMas');
 
   if (busqueda === "") {
-    // Borraste la búsqueda, limpiar catálogo y cargar con paginación
+    // Borraste la bÃºsqueda, limpiar catÃ¡logo y cargar con paginaciÃ³n
     indiceProducto = 0;
     document.getElementById('catalogo').innerHTML = "";
-    // No mostrar el botón aquí
-    cargarCatalogo();  // carga y decide cuándo mostrar el botón
+    // No mostrar el botÃ³n aquÃ­
+    cargarCatalogo();  // carga y decide cuÃ¡ndo mostrar el botÃ³n
     return;
   }
 
-  // Cuando hay búsqueda, ocultar botón y mostrar resultados filtrados
+  // Cuando hay bÃºsqueda, ocultar botÃ³n y mostrar resultados filtrados
   if (botonVerMas) botonVerMas.classList.add('hidden');
 
   const productosFiltrados = window.productos.filter(producto => {
@@ -538,10 +649,12 @@ function toggleFiltroMenu() {
     filtroDrawer.classList.remove('translate-x-0');
     filtroDrawer.classList.add('-translate-x-full');
     filtroOverlay.classList.add('hidden');
+    document.body.style.overflow = ''; // habilita scroll
   } else {
     filtroDrawer.classList.remove('-translate-x-full');
     filtroDrawer.classList.add('translate-x-0');
     filtroOverlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // bloquea scroll
   }
 }
 
@@ -575,20 +688,35 @@ function mostrarProductos(lista) {
 
   contenedor.innerHTML = "";
 
-  lista.filter(p => p.estado === 'activo').forEach(p => {
+  const activos = lista.filter(p => p.estado === 'activo');
+
+  if (activos.length === 0) {
+    contenedor.innerHTML = `
+  <div class="flex items-center justify-center h-48">
+    <p class="text-gray-500 text-center italic text-lg">
+    No hay productos que coincidan con los filtros.<br>Proba con otro filtro o restablece los actuales.
+    </p>
+  </div>
+`;
+    const botonVerMas = document.getElementById('verMas');
+    if (botonVerMas) botonVerMas.classList.add('hidden');
+    return;
+  }
+
+  activos.forEach(p => {
     const card = document.createElement('div');
     card.className = "bg-white rounded-lg shadow p-4 hover:shadow-md transition mb-4";
 
     const productoInfo = document.createElement('div');
     productoInfo.className = "producto-info cursor-pointer";
     productoInfo.innerHTML = `
-       <div class="w-full h-48 overflow-hidden rounded-lg">
-          <img src="./${p.imagen}" alt="${p.nombre}" class="w-full h-full object-cover">
-        </div>
-        <h3 class="text-lg font-semibold mt-2">${p.nombre}</h3>
-        <p class="text-sm text-gray-600">Tipo: ${p.tipo}</p>
-        <p class="text-blue-600 font-bold">$${p.precio}</p>
-        <span class="expand-arrow text-gray-500 ml-2">&#x2193;</span>
+      <div class="w-full h-48 overflow-hidden rounded-lg">
+        <img src="./${p.imagen}" alt="${p.nombre}" class="w-full h-full object-cover">
+      </div>
+      <h3 class="text-lg font-semibold mt-2">${p.nombre}</h3>
+      <p class="text-sm text-gray-600">Tipo: ${p.tipo}</p>
+      <p class="text-blue-600 font-bold">$${p.precio}</p>
+      <span class="expand-arrow text-gray-500 ml-2">&#x2193;</span>
     `;
 
     const extraInfo = document.createElement('div');
@@ -618,6 +746,7 @@ function mostrarProductos(lista) {
   if (botonVerMas) botonVerMas.classList.add('hidden');
 }
 
+
 function restablecerFiltros() {
   const precioMinInput = document.getElementById("precioMin");
   const precioMaxInput = document.getElementById("precioMax");
@@ -636,106 +765,111 @@ indiceProducto = 0;
 document.addEventListener('DOMContentLoaded', async () => {
   await cargarCatalogo();
   actualizarContadorCarrito();
-});
+}); 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('/sw.js');
+      console.log('? Service Worker registrado:', reg.scope);
+      
+      const btnActivarNotis = document.getElementById('btnActivarNotis');
+      if (!btnActivarNotis) return;
 
-function abrirModal(tipo) {
-  const modal = document.getElementById('modalInfo');
-  const titulo = document.getElementById('modalTitulo');
-  const contenido = document.getElementById('modalContenido');
+      // Función para ocultar botón
+      function ocultarBotonNotis() {
+        btnActivarNotis.style.display = 'none';
+      }
+      // Función para mostrar botón
+      function mostrarBotonNotis() {
+        btnActivarNotis.style.display = 'block';
+      }
 
-  if (tipo === 'privacidad') {
-    titulo.textContent = 'Política de Privacidad';
-    contenido.innerHTML = `
-      <p><em>Última actualización: 24 de mayo de 2025</em></p>
+      // Verificar estado del permiso y suscripción para mostrar/ocultar botón
+      const permiso = Notification.permission; // 'granted', 'denied' o 'default'
+      if (permiso === 'granted') {
+        const subscription = await reg.pushManager.getSubscription();
+      if (subscription) {
+          // Suscripción activa, ocultar botón
+          ocultarBotonNotis();
+        } else {
+          // Permiso concedido pero sin suscripción, mostrar botón para activar
+          mostrarBotonNotis();
+          localStorage.removeItem('notis_activadas'); // limpiamos para que el botón aparezca
+        }
+      } else {
+        // Permiso no concedido o denegado, mostrar botón
+        mostrarBotonNotis();
+        localStorage.removeItem('notis_activadas');
+      }
 
-<p>La privacidad de nuestros usuarios es importante. A continuación, te explicamos cómo recopilamos, usamos y protegemos tu información personal.</p>
+      // Manejador click para activar notis (como antes)
+      btnActivarNotis.addEventListener('click', async () => {
+        try {
+          if (!('PushManager' in window)) {
+            alert('Tu navegador no soporta notificaciones push.');
+            return;
+          }
 
-<p><strong>1. Información que recopilamos</strong><br>
-Podemos recopilar la siguiente información:<br>
-- Nombre y apellido<br>
-- Dirección de correo electrónico<br>
-- Teléfono<br>
-- Datos de sesión o navegación (cookies, dirección IP, tipo de dispositivo)<br>
-- Datos de actividad dentro de la aplicación, como registros de ventas o pagos realizados<br>
-- Información financiera relacionada con los ingresos generados a través del uso de la plataforma, con el fin de evaluar el desempeño comercial del producto o servicio ofrecido<br>
-</p>
+          const nuevoPermiso = await Notification.requestPermission();
+          if (nuevoPermiso !== 'granted') {
+            alert('No se concedió permiso para notificaciones.');
+            return;
+          }
 
+          // Suponiendo que tenés lógica para obtener el usuario logueado
+          const resUser = await fetch('https://kioskotecnica4.com/client/login/obtener_usuario.php');
+          const userData = await resUser.json();
+          if (!userData.logueado) {
+            alert('Debes estar logueado para activar notificaciones.');
+            return;
+          }
 
-<p><strong>2. Cómo usamos la información</strong><br>
-Usamos la información para:<br>
-- Procesar compras y pedidos<br>
-- Contactarte en relación con tus pedidos o tu cuenta<br>
-- Mejorar el sitio web y la experiencia del usuario<br>
-- Registrar y analizar transacciones y pagos realizados para evaluar el rendimiento comercial y las ganancias generadas</p>
+          const registration = await navigator.serviceWorker.ready;
 
+          const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array('BD519FuieqLzHkLWIVF5eovqW4367PL1QTfMimVaeC2vuFSEEKHOpdputMJjl8u97QUfqOgj0eJQr40-iyX2rkg')
+          });
 
-<p><strong>3. Protección de datos</strong><br>
-Implementamos medidas de seguridad técnicas y organizativas para proteger tus datos personales. Aunque hacemos nuestro mejor esfuerzo, ningún sistema es 100% seguro.</p>
+          const res = await fetch('/api/guardar-suscripcion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              subscription,
+              id_usuario: userData.id_usuario,
+              rol: 'usuario',
+              id_administracion: null
+            })
+          });
 
-<p><strong>4. Compartir información</strong><br>
-<strong>No vendemos, alquilamos ni compartimos tu información personal</strong> con terceros, excepto en los siguientes casos:<br>
-- Servicios de pago y envío (proveedores externos con los que trabajamos)<br>
-- Cuando sea requerido por ley o autoridad judicial</p>
+          if (res.ok) {
+            alert('Notificaciones activadas correctamente!');
+            ocultarBotonNotis();
+            localStorage.setItem('notis_activadas', 'true');
+          } else {
+            alert('Error al guardar la suscripción.');
+          }
 
-<p><strong>5. Cookies</strong><br>
-Este sitio utiliza cookies para mejorar la experiencia del usuario. Puedes configurar tu navegador para bloquearlas, pero algunas funciones pueden verse afectadas.</p>
+        } catch (error) {
+          console.error('Error al activar notificaciones:', error);
+          alert('Ocurrió un error al activar las notificaciones.');
+        }
+      });
 
-<p><strong>6. Tus derechos</strong><br>
-Tienes derecho a:<br>
-- Acceder a tus datos personales<br>
-- Corregir información incorrecta<br>
-- Solicitar la eliminación de tu cuenta y datos<br>
-Para ejercer estos derechos, escríbenos a: <strong>aapc.arg@gmail.com</strong></p>
-
-<p><strong>7. Cambios en la política</strong><br>
-Nos reservamos el derecho a modificar esta política de privacidad. Los cambios serán efectivos al ser publicados en esta página.</p>
-    `;
-  } else if (tipo === 'terminos') {
-    titulo.textContent = 'Términos y Condiciones';
-    contenido.innerHTML = `
-      <p><em>Última actualización: 24 de mayo de 2025</em></p>
-
-<p>Bienvenido/a a <strong>A.A.P.C</strong>. Al acceder o usar este sitio web, aceptas cumplir con los siguientes Términos y Condiciones. Si no estás de acuerdo con ellos, por favor, no utilices el sitio.</p>
-
-<p><strong>1. Aceptación de los términos</strong><br>
-Al utilizar nuestros servicios, aceptas estos términos en su totalidad. Si usas el sitio en representación de una empresa u otra entidad, aseguras que tienes la autoridad legal para obligarla a estos términos.</p>
-
-<p><strong>2. Uso del sitio</strong><br>
-Puedes usar el sitio solo para fines legales y conforme a nuestras políticas. No puedes:<br>
-- Utilizar bots, scrapers u otras herramientas automáticas para acceder al sitio.<br>
-- Interferir con el funcionamiento del sitio o sus funciones.<br>
-- Utilizar información falsa o suplantar identidades al registrarte o realizar compras.</p>
-
-<p><strong>3. Registro de usuario</strong><br>
-Al registrarte, te comprometes a proporcionar información veraz, completa y actualizada. Eres responsable de mantener la confidencialidad de tu cuenta y contraseña.</p>
-
-<p><strong>4. Compras</strong><br>
-Al realizar una compra en el sitio:<br>
-- Aceptas proporcionar información válida para el pago.<br>
-- Aceptas que los precios y disponibilidad pueden cambiar sin previo aviso.<br>
-- Nos reservamos el derecho de rechazar o cancelar pedidos si se detectan errores, fraude, o cualquier violación a estos términos.</p>
-
-<p><strong>5. Propiedad intelectual</strong><br>
-Todo el contenido de este sitio (texto, imágenes, logos, diseño, etc.) es propiedad de <strong>A.A.P.C</strong>, y está protegido por derechos de autor y otras leyes. No está permitido copiar, reproducir o distribuir el contenido sin autorización previa por escrito.</p>
-
-<p><strong>6. Derechos de autor © 2025 A.A.P.C</strong><br>
-Todos los derechos reservados. Ninguna parte de este sitio web, incluyendo pero no limitándose a textos, gráficos, logotipos, iconos de botones, imágenes, clips de audio, descargas digitales y compilaciones de datos, puede ser reproducida, copiada, transmitida, distribuida, descargada o publicada de ninguna manera sin el permiso previo por escrito de A.A.P.C.<br>
-El uso no autorizado puede violar las leyes de copyright, marcas registradas y otras regulaciones aplicables. Para consultas sobre permisos, por favor contáctanos en: <a href="mailto:aapc.arg@gmail.com">aapc.arg@gmail.com</a>.</p>
-
-<p><strong>7. Modificaciones</strong><br>
-Nos reservamos el derecho de modificar estos términos en cualquier momento. Las modificaciones se harán efectivas una vez publicadas en esta misma página. Es tu responsabilidad revisarlas periódicamente.</p>
-
-<p><strong>8. Limitación de responsabilidad</strong><br>
-No nos hacemos responsables por:<br>
-- Daños directos, indirectos, incidentales o consecuentes por el uso del sitio.<br>
-- Errores en el contenido o interrupciones del servicio.<br>
-- Virus o ataques que puedan afectar tus dispositivos.</p>
-    `;
-  }
-
-  modal.classList.remove('hidden');
+    } catch (err) {
+      console.error('? Error al registrar Service Worker:', err);
+    }
+  });
 }
 
-function cerrarModal() {
-  document.getElementById('modalInfo').classList.add('hidden');
-} 
+// Convierte la clave VAPID pública a Uint8Array
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}

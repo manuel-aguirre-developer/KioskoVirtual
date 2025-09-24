@@ -6,7 +6,7 @@ const usuariosPorPagina = 10;
 const spinner = document.getElementById('spinner');
 const buscador = document.getElementById('buscadorUsuarios');
 
-const ws = new WebSocket('ws://localhost:3006');
+const ws = new WebSocket('ws://138.219.42.29/ws');
 
 ws.addEventListener('open', () => {
   console.log('Conectado a WebSocket');

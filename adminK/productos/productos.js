@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('imagen_actual').value = producto.imagen;
 
             const imgContainer = document.getElementById('imagenProducto');
-            const urlBase = 'http://localhost/kioskoTecnica4/';
+            const urlBase = 'http://138.219.42.29/';
             imgContainer.innerHTML = `<img src="${urlBase}${producto.imagen}" alt="Imagen del producto" class="w-full h-auto rounded-lg">`;
             modalModificar.classList.remove('hidden');
           })

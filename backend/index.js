@@ -22,27 +22,27 @@ app.use(express.urlencoded({ extended: true }));
 // Solo exponer carpetas públicas
 app.use('/adminK', express.static(path.join(__dirname, '..', 'admin')));
 app.use('/client', express.static(path.join(__dirname, '..', 'cliente')));
-// ¡NO sirvas la carpeta 'protegida'!
-
 
 // Rutas
 app.use('/api/payments', paymentRoutes);
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
-
+const paymentController = require('./controllers/payment.controller');
 // Servidor HTTP + WebSocket
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+paymentController.initSockets(wss);
 
 // Conexión MySQL
 const db = mysql.createConnection({
-  host: 'localhost',
-  port: 3307,
-  user: 'root',
-  password: 'biblioteca4',
+  host: '138.219.42.29',   // IP o dominio de tu servidor cloud
+  port: 3306,              // puerto MySQL (normalmente 3306)
+  user: 'kiosko_user',     // usuario que creaste con acceso remoto
+  password: 'aapc',        // contraseña correcta
   database: 'kiosko'
 });
+
 
 // Función de hash
 function calcularHash(obj) {
@@ -83,7 +83,7 @@ wss.on('connection', (ws) => {
   // Intervalo para todos los pedidos (vista general)
   const pedidosInterval = setInterval(() => {
     db.query(
-      `SELECT v.id, v.id_usuario, u.usuario AS nombre_usuario, v.estado_pedido, v.fecha_venta, v.total, v.mensaje, v.pago_en
+      `SELECT v.id, v.id_usuario, u.usuario AS nombre_usuario, v.estado_pedido, v.fecha_venta, v.total, v.mensaje, v.pago_en, v.codigo_retiro
        FROM ventas v LEFT JOIN usuarios u ON v.id_usuario = u.id ORDER BY v.fecha_venta DESC`,
       (err, results) => {
         if (err) return console.error('Error pedidos:', err);
@@ -174,6 +174,6 @@ wss.on('connection', (ws) => {
 });
  
 // Iniciar servidor
-server.listen(port, () => {
+server.listen(port, '0.0.0.0', () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
 });

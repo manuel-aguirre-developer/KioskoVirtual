@@ -26,7 +26,7 @@ function mostrarSplash() {
 
 function cargarTextoBienvenida() {
   let textoBienvenida = "Kiosko Virtual";
-  fetch('http://localhost/kioskoTecnica4/adminK/obtener_admin.php')
+  fetch('http://138.219.42.29/adminK/obtener_admin.php')
     .then(response => response.json())
     .then(data => {
       if (data.logueado) {
@@ -34,7 +34,7 @@ function cargarTextoBienvenida() {
         let primerNombre = nombreCompleto.split(' ')[0];
 
         if (primerNombre.toUpperCase() === "AAPC") {
-          textoBienvenida = "Bienvenido señor";
+          textoBienvenida = "Bienvenido";
         } else {
           if (primerNombre.length > 17) {
             primerNombre = primerNombre.substring(0, 17) + '...';

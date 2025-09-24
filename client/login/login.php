@@ -1,13 +1,46 @@
 <?php
+// ?? Configurar duración de la sesión (30 días)
+$lifetime = 60 * 60 * 24 * 30;
+ini_set('session.cookie_lifetime', 60 * 60 * 24 * 30);
+ini_set('session.gc_maxlifetime', 60 * 60 * 24 * 30);
+session_set_cookie_params([
+    'lifetime' => $lifetime,
+    'path' => '/',
+    'secure' => isset($_SERVER['HTTPS']),
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+
+// ?? Forzar HTTPS si usás proxy inverso (solo si es necesario)
+if (!isset($_SERVER['HTTPS']) && isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    $_SERVER['HTTPS'] = 'on';
+}
 session_start();
 include '../../General/conexion.php';
 
 $usuario = $_POST['usuario'];
-$contraseña = $_POST['contraseña'];
+$contrasenia = $_POST['contraseña'] ?? $_POST['contraseÃ±a'] ?? ''; // manejar codificación errónea
 $origen = $_POST['origen'] ?? 'index';
-$redireccion = ($origen === 'carrito') ? 'carrito.html' : '../../index.html';
 
-if (empty($usuario) || empty($contraseña)) {
+// Switch para asignar redireccionamiento
+switch ($origen) {
+    case 'carrito':
+        $redireccion = '../carrito/carrito.html';
+        break;
+    case 'configuracion':
+        $redireccion = '../configuracion/configuracion.html';
+        break;
+    case 'verPedidos':
+        $redireccion = '../verPedidos/verPedidos.html';
+        break;
+    case 'perfil':
+        $redireccion = '../perfil/index.html';
+        break;
+    default:
+        $redireccion = '../../index.html';
+        break;
+}
+if (empty($usuario) || empty($contrasenia)) {
     $mensaje = "Nombre/email o contraseña vacíos.";
     echo "<script>
         sessionStorage.setItem('login_error', '$mensaje');
@@ -25,7 +58,8 @@ $resultado = $stmt->get_result();
 if ($resultado->num_rows === 1) {
     $usuario_data = $resultado->fetch_assoc();
 
-    if (password_verify($contraseña, $usuario_data['contrasena'])) {
+    if (password_verify($contrasenia, $usuario_data['contrasena'])) {
+        // Guardar los datos del usuario en sesión
         $_SESSION['usuario'] = [
             'id' => $usuario_data['id'],
             'nombre' => $usuario_data['usuario'],
@@ -33,16 +67,7 @@ if ($resultado->num_rows === 1) {
             'email' => $usuario_data['email'],
         ];
 
-        // 🔁 Renovar cookie de sesión por 30 días
-        $lifetime = 60 * 60 * 24 * 30; // 30 días
-        setcookie(session_name(), session_id(), [
-            'expires' => time() + $lifetime,
-            'path' => '/',
-            'secure' => isset($_SERVER['HTTPS']),
-            'httponly' => true,
-            'samesite' => 'Lax'
-        ]);
-
+        // PHP ya gestiona la cookie con la duración configurada arriba
         header("Location: $redireccion");
         exit;
     }

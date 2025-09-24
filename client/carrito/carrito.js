@@ -2,7 +2,7 @@ verificarSesionYBaneo();
 mostrarCarrito();
 async function verificarSesionYBaneo() {
   try {
-    const resUsuario = await fetch('http://localhost/kioskoTecnica4/client/login/obtener_usuario.php');
+    const resUsuario = await fetch('http://138.219.42.29/client/login/obtener_usuario.php');
     const data = await resUsuario.json();
 
     const nombreUsuarioSpan = document.getElementById('nombreUsuario');
@@ -17,7 +17,7 @@ async function verificarSesionYBaneo() {
       }
 
       // Verifica si está baneado
-      const resBaneo = await fetch(`http://localhost/kioskoTecnica4/client/login/obtenerBaneo.php?id=${data.id_usuario}`);
+      const resBaneo = await fetch(`http://138.219.42.29/client/login/obtenerBaneo.php?id=${data.id_usuario}`);
       const baneoData = await resBaneo.json();
 
       if (baneoData.baneado) {
@@ -169,7 +169,7 @@ function cerrarMetodo() {
 }
 
 function pagarEfectivo() {
-  fetch('http://localhost/kioskoTecnica4/client/carrito/obtener_user_compra.php')
+  fetch('http://138.219.42.29/client/carrito/obtener_user_compra.php')
     .then(response => response.json())
     .then(data => {
       cerrarMetodo();
@@ -208,9 +208,9 @@ function mostrarNotificacion(mensaje) {
 }
 
 document.getElementById('pagarTransferencia').addEventListener('click', async () => {
-  const userRes = await fetch('http://localhost/kioskoTecnica4/client/carrito/obtener_user_compra.php');
+  const userRes = await fetch('http://138.219.42.29/client/carrito/obtener_user_compra.php');
   const userData = await userRes.json();
-
+    
   if (!userData.logueado) {
     cerrarMetodo();
     document.getElementById("modalLogin").classList.remove("hidden");
@@ -223,7 +223,7 @@ document.getElementById('pagarTransferencia').addEventListener('click', async ()
   }
 
   const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-
+  
   if (carrito.length === 0) {
     alert("El carrito está vacío.");
     return;
@@ -240,7 +240,7 @@ document.getElementById('pagarTransferencia').addEventListener('click', async ()
   }));
 
   try {
-    const res = await fetch('http://localhost:3006/api/payments/create-preference', {
+    const res = await fetch('/api/payments/create-preference', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -251,12 +251,16 @@ document.getElementById('pagarTransferencia').addEventListener('click', async ()
         total
       })
     });
-
+    
+     if (!res.ok) {
+      // Si el backend responde con error, lo detectamos acá
+      const errorText = await res.text();
+      throw new Error(`Error en respuesta del servidor: ${res.status} ${res.statusText} - ${errorText}`);
+    }
+    
     const data = await res.json();
 
     if (data && data.payment_url) {
-      localStorage.removeItem("carrito");
-      localStorage.removeItem("mensajePedidoPersonalizado");
       window.location.href = data.payment_url;
     } else {
       alert("Error al generar el link de pago.");

@@ -22,7 +22,7 @@ function conectarWebSocket() {
   const spinner = document.getElementById('spinner');
   spinner.style.display = 'flex';
 
-  socket = new WebSocket('ws://localhost:3006');
+  socket = new WebSocket('ws://138.219.42.29/ws');
 
   socket.addEventListener('open', () => {
     console.log('Conectado al servidor WebSocket — ¡WebSocket activo y funcionando!');
@@ -76,11 +76,17 @@ function mostrarPagina(pagina) {
         <button onclick="Vermas(${p.id})" class="bg-indigo-300 text-indigo-800 px-2 py-1 rounded hover:bg-indigo-400">Ver venta</button>
       </td>
     `;
+
+    if (p.estado_pedido === "pedido_listo") {
+      fila.classList.add("fila-pedido-listo");
+    }
+
     tbody.appendChild(fila);
   });
 
   renderizarPaginacion(pedidos.length);
 }
+
 
 function renderizarPaginacion(totalPedidos) {
   const totalPaginas = Math.ceil(totalPedidos / pedidosPorPagina);
@@ -176,7 +182,16 @@ window.Vermas = async function(id) {
       alert("Error: " + venta.error);
       return;
     }
-     const vuelto = venta.abono && venta.abono > venta.total ? (venta.abono - venta.total).toFixed(2) : "0.00";
+const metodoPago = venta.productos.length > 0 ? venta.productos[0].pago_en : null;
+const total = Number(venta.total) || 0;
+
+let abono;
+if (metodoPago === 'transferencia') {
+  abono = total;  // para transferencia, el abono es el total del producto
+} else {
+  abono = Number(venta.abono) || 0; // para otros métodos, mantiene el abono que viene
+}
+const vuelto = abono > total ? (abono - total).toFixed(2) : "0.00";
     const modal = document.getElementById('modalDetalles');
     const titulo = modal.querySelector('.modal-title');
     const cuerpo = modal.querySelector('.modal-body');
@@ -185,7 +200,9 @@ window.Vermas = async function(id) {
    cuerpo.innerHTML = `
   <p><strong>ID Usuario:</strong> ${venta.id_usuario}</p>
   <p><strong>Nombre del usuario:</strong> ${venta.nombre_usuario}</p>
+  <p><strong>Curso:</strong> ${venta.curso_usuario || 'No se especificó curso'}</p>
   <p><strong>Método de pago:</strong> ${venta.productos.length > 0 ? venta.productos[0].pago_en : 'No mando mensaje.'}</p>
+  <p><strong>Abono con:</strong> $${abono}</p>
   <p><strong>Vuelto pendiente:</strong> $${vuelto}</p>
   <p><strong>Mensaje personalizado:</strong> ${venta.productos.length > 0 ? (venta.productos[0].mensaje || 'No mando mensaje.') : 'No mando mensaje.'}</p>
 

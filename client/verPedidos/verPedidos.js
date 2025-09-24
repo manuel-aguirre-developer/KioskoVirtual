@@ -4,7 +4,7 @@ let usuarioActualId = null;
 const botonesFiltro = document.getElementById('botonesFiltro');
 
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('http://localhost/kioskoTecnica4/client/login/obtener_usuario.php')
+  fetch('http://138.219.42.29/client/login/obtener_usuario.php')
     .then(response => response.json())
     .then(data => {
       if (!data.logueado) {
@@ -39,7 +39,7 @@ function iniciarWebSocket(userId) {
   botonesFiltro.style.display = 'none';
   usuarioActualId = userId;
 
-  socket = new WebSocket("ws://localhost:3006");
+  socket = new WebSocket("ws://138.219.42.29/ws");
 
   socket.onopen = () => {
     // Conexión abierta
@@ -135,7 +135,7 @@ function cargarDetallesPedido(idVenta) {
   const modal = document.getElementById('modalDetalle');
   const detalleTexto = document.getElementById('detalleTexto');
 
-  fetch(`http://localhost/kioskoTecnica4/client/verPedidos/detalles_venta.php?id_venta=${idVenta}`)
+  fetch(`http://138.219.42.29/client/verPedidos/detalles_venta.php?id_venta=${idVenta}`)
   .then(response => {
     if (!response.ok) throw new Error('Error al obtener los detalles');
     return response.json();
@@ -148,21 +148,26 @@ function cargarDetallesPedido(idVenta) {
     } else {
 
       const metodoPago = data[0].pago_en || 'N/A';
-      const mensaje = data[0].mensaje || 'No mandaste ningún mensaje.';
-      const abono = data[0].abono || '0.00';
+const mensaje = data[0].mensaje || 'No mandaste ningún mensaje.';
+let abono = parseFloat(data[0].abono) || 0.00;
 
-      // Calculamos vuelto (abono - suma de subtotales)
-      const totalSubtotal = data.reduce((acc, item) => acc + parseFloat(item.subtotal), 0);
-      const vuelto = (parseFloat(abono) - totalSubtotal).toFixed(2);
+// Si el método de pago es transferencia, se toma como abono el total del producto
+const totalSubtotal = data.reduce((acc, item) => acc + parseFloat(item.subtotal), 0);
+if (metodoPago.toLowerCase() === 'transferencia') {
+  abono = totalSubtotal;
+}
 
-      const infoExtra = document.createElement('div');
-      infoExtra.innerHTML = `
-        <p class="mb-2 text-sm"><strong>Método de pago:</strong> ${metodoPago}</p>
-        <p class="mb-2 text-sm"><strong>Mensaje personalizado:</strong> ${mensaje}</p>
-        <p class="mb-2 text-sm"><strong>Pagaste con:</strong> $${parseFloat(abono).toFixed(2)}</p>
-        <p class="mb-4 text-sm"><strong>Vuelto a recibir:</strong> $${vuelto}</p>
-      `;
-      detalleTexto.appendChild(infoExtra);
+const vuelto = (abono - totalSubtotal).toFixed(2);
+
+const infoExtra = document.createElement('div');
+infoExtra.innerHTML = `
+  <p class="mb-2 text-sm"><strong>Método de pago:</strong> ${metodoPago}</p>
+  <p class="mb-2 text-sm"><strong>Mensaje personalizado:</strong> ${mensaje}</p>
+  <p class="mb-2 text-sm"><strong>Pagaste con:</strong> $${abono.toFixed(2)}</p>
+  <p class="mb-4 text-sm"><strong>Vuelto a recibir:</strong> $${vuelto}</p>
+`;
+detalleTexto.appendChild(infoExtra);
+
 
       const lista = document.createElement('ul');
       lista.classList.add('list-disc', 'ml-4');

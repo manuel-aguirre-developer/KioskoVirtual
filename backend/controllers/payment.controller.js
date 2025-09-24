@@ -6,7 +6,123 @@ mercadopago.configure({
   access_token: process.env.MP_ACCESS_TOKEN
 });
 
-// CREAR PREFERENCIA
+const usuariosConectados = new Map();
+
+exports.initSockets = (wss) => {
+  wss.on('connection', (ws) => {
+    ws.on('message', (msg) => {
+      try {
+        const data = JSON.parse(msg);
+        if (data.tipo === 'registrar_usuario' && data.id_usuario) {
+          if (!usuariosConectados.has(data.id_usuario)) {
+            usuariosConectados.set(data.id_usuario, new Set());
+          }
+          usuariosConectados.get(data.id_usuario).add(ws);
+          ws._id_usuario = data.id_usuario;
+        }
+      } catch (err) {
+        console.error('Error al procesar mensaje WebSocket:', err);
+      }
+    });
+
+    ws.on('close', () => {
+      const id_usuario = ws._id_usuario;
+      if (id_usuario && usuariosConectados.has(id_usuario)) {
+        usuariosConectados.get(id_usuario).delete(ws);
+        if (usuariosConectados.get(id_usuario).size === 0) {
+          usuariosConectados.delete(id_usuario);
+        }
+      }
+    });
+  });
+};
+
+const notificarUsuario = (id_usuario, mensaje) => {
+  const sockets = usuariosConectados.get(id_usuario);
+  if (sockets) {
+    sockets.forEach(ws => {
+      if (ws.readyState === ws.OPEN) {
+        ws.send(JSON.stringify(mensaje));
+      }
+    });
+  }
+};
+
+// ================= FUNCIONES AUXILIARES ===================
+
+const insertarPagoPendiente = (usuario, pago, productos, fecha) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "INSERT INTO pagos_pendientes (id_usuario, fecha_venta, total, estado_pedido, pago_en, mensaje, id_pago_mp) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [usuario, fecha, pago.transaction_amount, 'pendiente', pago.metadata.pago_en, pago.metadata.mensaje, pago.id],
+      (err, result) => {
+        if (err) return reject(err);
+        resolve(result.insertId);
+      }
+    );
+  });
+};
+
+const insertarDetallesPendientes = (id_pago_pendiente, productos) => {
+  return Promise.all(productos.map(prod => {
+    return new Promise((resolve, reject) => {
+      db.query(
+        "INSERT INTO detalles_pendientes (id_venta, id_producto, cantidad, subtotal) VALUES (?, ?, ?, ?)",
+        [id_pago_pendiente, prod.id_pro, prod.quantity, prod.unit_price * prod.quantity],
+        (err) => {
+          if (err) return reject(err);
+          resolve();
+        }
+      );
+    });
+  }));
+};
+  
+const moverPendienteAVenta = async (id_pago_mp) => {
+  return new Promise((resolve, reject) => {
+    db.query("SELECT * FROM pagos_pendientes WHERE id_pago_mp = ?", [id_pago_mp], async (err, pagos) => {
+      if (err || pagos.length === 0) return reject(err || 'No se encontró el pago pendiente');
+
+      const venta = pagos[0];
+      db.query(
+        "INSERT INTO ventas (id_usuario, fecha_venta, total, estado_pedido, pago_en, mensaje) VALUES (?, ?, ?, ?, ?, ?)",
+        [venta.id_usuario, venta.fecha_venta, venta.total, 'esperando', venta.pago_en, venta.mensaje],
+        (err, result) => {
+          if (err) return reject(err);
+          const nuevaVentaId = result.insertId;
+
+          db.query("SELECT * FROM detalles_pendientes WHERE id_venta = ?", [venta.id], (err, detalles) => {
+            if (err) return reject(err);
+
+            const insertPromises = detalles.map(det => {
+              return new Promise((resolve2, reject2) => {
+                db.query(
+                  "INSERT INTO detalles_venta (id_venta, id_producto, cantidad, subtotal) VALUES (?, ?, ?, ?)",
+                  [nuevaVentaId, det.id_producto, det.cantidad, det.subtotal],
+                  (err) => {
+                    if (err) return reject2(err);
+                    resolve2();
+                  }
+                );
+              });
+            });
+
+            Promise.all(insertPromises)
+              .then(() => {
+                db.query("DELETE FROM pagos_pendientes WHERE id = ?", [venta.id]);
+                db.query("DELETE FROM detalles_pendientes WHERE id_venta = ?", [venta.id]);
+                resolve(nuevaVentaId);
+              })
+              .catch(reject);
+          });
+        }
+      );
+    });
+  });
+};
+
+// =================== CREAR PREFERENCIA ======================
+
 exports.createPreference = async (req, res) => {
   const { items, usuario, pago_en, mensaje } = req.body;
   const id_usuario = usuario?.id;
@@ -19,43 +135,41 @@ exports.createPreference = async (req, res) => {
     return res.status(400).json({ error: 'Faltan productos en la preferencia' });
   }
 
-  // Aseguramos que cada producto tenga id_pro para luego insertar en detalles_venta
   const productosParaMetadata = items.map(p => ({
-    id_pro: p.id,         // <-- Aquí aseguramos enviar el id correcto del producto
+    id_pro: p.id,
     quantity: p.quantity,
     unit_price: p.unit_price
   }));
 
   const preference = {
-  items: items.map(p => ({
-    title: p.title,
-    quantity: p.quantity,
-    unit_price: p.unit_price
-  })),
-  notification_url: "https://591e-186-158-220-100.ngrok-free.app/api/payments/webhook",
-  back_urls: {
-    success: "https://591e-186-158-220-100.ngrok-free.app/index.js",
-    failure: "https://591e-186-158-220-100.ngrok-free.app/failure",
-    pending: "https://591e-186-158-220-100.ngrok-free.app/pending"
-  },
-  auto_return: "approved",  
-  metadata: {
-    id_usuario,
-    productos: JSON.stringify(productosParaMetadata),
-    pago_en,
-    mensaje
-  },
-  payment_methods: {
-    excluded_payment_types: [
-      { id: "credit_card" },
-      { id: "debit_card" },
-      { id: "ticket" },
-      { id: "atm" }
-    ],
-    default_payment_type_id: "bank_transfer"
-  }
-};
-
+    items: items.map(p => ({
+      title: p.title,
+      quantity: p.quantity,
+      unit_price: p.unit_price
+    })),
+    notification_url: "http://138.219.42.29/api/payments/webhook",
+    back_urls: {
+      success: "https://138.219.42.29/mp/gracias.html",
+      failure: "https://138.219.42.29/mp/fallo.html",
+      pending: "https://138.219.42.29/mp/pendiente.html"
+    },
+    auto_return: "approved",
+    metadata: {
+      id_usuario,
+      productos: JSON.stringify(productosParaMetadata),
+      pago_en,
+      mensaje
+    },
+    payment_methods: {
+      excluded_payment_types: [
+        { id: "credit_card" },
+        { id: "debit_card" },
+        { id: "ticket" },
+        { id: "atm" }
+      ],
+      default_payment_type_id: "bank_transfer"
+    }
+  };
 
   try {
     const response = await mercadopago.preferences.create(preference);
@@ -66,9 +180,10 @@ exports.createPreference = async (req, res) => {
   }
 };
 
-// WEBHOOK
+// =================== WEBHOOK ======================
+
 exports.webhook = async (req, res) => {
-  console.log('Webhook recibido:', JSON.stringify(req.body, null, 2));
+  console.log('📡 Webhook recibido:', JSON.stringify(req.body, null, 2));
 
   try {
     const body = req.body;
@@ -86,81 +201,66 @@ exports.webhook = async (req, res) => {
       try {
         payment = await mercadopago.payment.findById(paymentId);
       } catch (err) {
-        console.warn(`Pago con ID ${paymentId} no encontrado o error al consultar:`, err.message);
-        return res.sendStatus(200); // Para que MP no siga reintentando
+        console.warn(`❗ Error al consultar pago ${paymentId}:`, err.message);
+        return res.sendStatus(200);
       }
 
-      if (payment.body.status === 'approved') {
-        const meta = payment.body.metadata;
-        const id_usuario = meta.id_usuario;
-        const pago_en = meta.pago_en;
-        const mensaje = meta.mensaje;
-        const productos = JSON.parse(meta.productos || "[]");
-        const fecha = new Date();
+      const estado = payment.body.status;
+      const meta = payment.body.metadata;
+      const id_usuario = meta.id_usuario;
+      const productos = JSON.parse(meta.productos || "[]");
+      const fecha = new Date();
 
-        console.log('Productos para insertar detalles:', productos);
-        
-        // Inserción de venta
-        const insertarVenta = () => {
-          return new Promise((resolve, reject) => {
-            db.query(
-              "INSERT INTO ventas (id_usuario, fecha_venta, total, estado_pedido, pago_en, mensaje) VALUES (?, ?, ?, ?, ?, ?)",
-              [id_usuario, fecha, payment.body.transaction_amount, 'esperando', pago_en, mensaje],
-              (err, result) => {
-                if (err) return reject(err);
-                resolve(result.insertId);
-              }
-            );
-          });
-        };
-
-        // Inserción de detalles_venta
-        const insertarDetalles = (id_venta) => {
-          return Promise.all(productos.map(prod => {
-            console.log('Insertando detalle con:', {
-              id_producto: prod.id_pro,
-              cantidad: prod.quantity,
-              subtotal: prod.unit_price * prod.quantity
-            });
-
-            return new Promise((resolve, reject) => {
-              db.query(
-                "INSERT INTO detalles_venta (id_venta, id_producto, cantidad, subtotal) VALUES (?, ?, ?, ?)",
-                [
-                  id_venta,
-                  prod.id_pro,
-                  prod.quantity,
-                  prod.unit_price * prod.quantity,
-                ],
-                (err) => {
-                  if (err) return reject(err);
-                  resolve();
-                }
-              );
-            });
-          }));
-        };
-
+      if (estado === 'approved') {
+        console.log('✅ Pago aprobado. Moviendo desde pendientes...');
         try {
-          const id_venta = await insertarVenta();
-          await insertarDetalles(id_venta);
+          const id_venta = await moverPendienteAVenta(paymentId);
+          localStorage.removeItem("carrito");
+          localStorage.removeItem("mensajePedidoPersonalizado");
+          notificarUsuario(id_usuario, {
+            tipo: 'pago_aprobado',
+            estado: estado,
+            id_venta,
+            mensaje: 'Tu pago fue aprobado.'
+          });
         } catch (err) {
-          console.error('Error guardando datos en BD:', err);
+          console.error('❌ Error al mover de pendiente a venta:', err);
           return res.sendStatus(500);
         }
+
+      } else if (estado === 'pending') {
+        console.log('⌛ Pago pendiente. Guardando...');
+        try {
+          const id_pendiente = await insertarPagoPendiente(id_usuario, payment.body, productos, fecha);
+          await insertarDetallesPendientes(id_pendiente, productos);
+
+          notificarUsuario(id_usuario, {
+            tipo: 'pago_pendiente',
+            estado: estado,
+            mensaje: 'Tu pago está pendiente.'
+          });
+        } catch (err) {
+          console.error('❌ Error guardando pago pendiente:', err);
+          return res.sendStatus(500);
+        }
+
+      } else if (estado === 'rejected') {
+        console.log('❌ Pago rechazado.');
+        notificarUsuario(id_usuario, {
+          tipo: 'pago_rechazado',
+          estado: estado,
+          mensaje: 'Tu pago fue rechazado.'
+        });
       }
 
       return res.sendStatus(200);
-    }
-    else if (topic === 'merchant_order' && body.resource) {
-      return res.sendStatus(200);
     } else {
-      console.warn('Evento no manejado o faltan datos:', body);
+      console.warn('⚠️ Evento no manejado:', body);
       return res.sendStatus(400);
     }
 
   } catch (error) {
-    console.error('Error en webhook:', error);
+    console.error('💥 Error en webhook:', error);
     return res.sendStatus(500);
   }
 };

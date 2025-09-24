@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayuda - Kiosko Técnica 4</title>
+  <link href="../../General/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+ <header class="bg-blue-600 text-white p-4 shadow">
+  <div class="flex items-center space-x-2">
+    <button onclick="window.location.href='../../index.html'" class="text-sm flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <h1 class="text-xl font-bold">Ayuda - Kiosko Técnica 4</h1>
+  </div>
+</header>
+
+
+  <main class="p-6 space-y-6">
+    <section>
+      <h2 class="text-2xl font-semibold text-blue-600 mb-2">¿Qué es esta página?</h2>
+      <p>Esta es una tienda online del <strong>kiosko de la Técnica 4</strong>. Podés explorar productos, agregarlos al carrito y realizar pedidos desde tu celular o computadora. Ideal para hacer pedidos anticipados o evitar filas.</p>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-semibold text-blue-600 mb-2">¿Cómo realizar una compra?</h2>
+      <ol class="list-decimal pl-5 space-y-2">
+        <li>Registrate o iniciá sesión desde el botón de perfil.</li>
+        <li>Buscá productos desde el catálogo o con la barra de búsqueda.</li>
+        <li>Agregá productos al carrito.</li>
+        <li>Ingresá al carrito desde el ícono <i class="fas fa-shopping-cart text-blue-500"></i> en la esquina inferior.</li>
+        <li>Confirmá tu pedido, elegí el método de pago y completá el proceso.</li>
+      </ol>
+      <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-2 mt-4 justify-items-center">
+  <img src="../../imagenes/paso1.png" alt="Paso 1" class="w-60 rounded shadow h-auto">
+  <img src="../../imagenes/paso2.png" alt="Paso 2" class="w-60 rounded shadow h-auto">
+  <img src="../../imagenes/paso3.png" alt="Paso 3" class="w-60 rounded shadow h-auto">
+  <img src="../../imagenes/paso4.png" alt="Paso 4" class="w-60 rounded shadow h-auto">
+  <img src="../../imagenes/paso5.png" alt="Paso 5" class="w-60 rounded shadow h-auto">
+  <img src="../../imagenes/paso6.png" alt="Paso 6" class="w-60 rounded shadow h-auto">
+  <img src="../../imagenes/paso7.png" alt="Paso 7" class="w-60 rounded shadow h-auto">
+  <img src="../../imagenes/paso8.png" alt="Paso 8" class="w-60 rounded shadow h-auto">
+  <img src="../../imagenes/paso9.png" alt="Paso 9" class="w-60 rounded shadow h-auto">
+  <img src="../../imagenes/paso10.png" alt="Paso 10" class="w-60 rounded shadow h-auto">
+</div>
+
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-semibold text-blue-600 mb-2">¿Cómo pagar?</h2>
+      <ol class="list-decimal pl-5 space-y-2">
+      <li>Actualmente podés pagar en <strong>efectivo</strong> y <strong>transferencia por Mercado Pago</strong>.</li>
+      <li>Si pagas en <strong>efectivo</strong>, deberas loguearte y luego ir al kiosko a comunicar que activen tu cuenta.</li>
+      <li>Luego de ser activada, podras continuar con el proceso de tu compra.</p>
+      <li>Si pagas en <strong>Transferencia por Mercado Pago</strong>, deberas loguearte. Aqui no es necesario activar tu cuenta, aunque recomendamos para futuras compras que la actives.</li>
+      <li>Luego de Pagar, en la seccion de <strong>Mis pedidos</strong> veras tu pedido con el cual luego retiraras tu compra.</li>
+      </ol>
+    </section>
+    
+     <section>
+      <h2 class="text-2xl font-semibold text-blue-600 mb-2">¿Cómo Retirar?</h2>
+      <ol class="list-decimal pl-5 space-y-2">
+      <li>Despues de realizar tu compra exitosamente, en <strong>Mis pedidos</strong> veras tu <strong>ID De Compra</strong>, con tu <strong>Nombre</strong>.</li>
+      <li>Deberas estar al pendiente del estado de tu pedido. Cuando tu pedido indique que esta listo, podras ir a retirarlo al kiosko.</li>
+      <li>Al momento de retirarlo, ten tu aplicacion abierta en la seccion de <strong>Mis pedidos</strong>, con eso retiraras tu pedido.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-semibold text-blue-600 mb-2">¿Necesitás más ayuda?</h2>
+      <p>Podés contactarnos desde la sección <a href="../contacto/contacto.html" class="text-blue-600 underline">Contacto</a></p>
+    </section>
+  </main>
+
+    <footer class="bg-gray-600 text-white mt-2 p-5 text-center">
+    <div class="text-sm">
+      © 2025 A.A.P.C - Todos los derechos reservados por copyright
+    </div>
+    <div class="mt-2 text-xs">
+      <a class="hover:underline" onclick="abrirModal('privacidad')">Política de Privacidad</a> |
+      <a class="hover:underline" onclick="abrirModal('terminos')">Términos y Condiciones</a> |
+      <a href="../contacto/contacto.html" class="hover:underline">Contacto</a>
+    </div>
+  </footer>
+  <!-- Modal genérico full pantalla -->
+  <div id="modalInfo" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+    <div class="bg-white w-full h-full relative p-6 flex flex-col">
+
+      <!-- Botón cerrar: fijado arriba, fuera del scroll -->
+      <button onclick="cerrarModal()"
+        class="fixed top-4 right-6 text-2xl font-bold text-gray-600 hover:text-red-600 z-50 bg-white rounded-full p-1 shadow">
+        ✕
+      </button>
+
+      <!-- Título del modal -->
+      <h2 id="modalTitulo" class="text-3xl font-bold mb-6 text-blue-600 pr-10">Título</h2>
+
+      <!-- Contenido scrollable horizontal y vertical -->
+      <div id="modalContenido" class="flex-1 overflow-auto text-base text-gray-800 leading-relaxed min-w-full min-h-0">
+        <!-- Contenido dinámico insertado con JS -->
+      </div>
+
+    </div>
+  </div>
+  <script src="ayuda.js"></script>
+</body>
+</html>

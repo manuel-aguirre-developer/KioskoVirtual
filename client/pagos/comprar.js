@@ -8,9 +8,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let id_usuario = null;
 
-  // Obtener datos del usuario
   try {
-    const res = await fetch("http://localhost/kioskoTecnica4/client/carrito/obtener_user_compra.php");
+    const res = await fetch("http://138.219.42.29/client/carrito/obtener_user_compra.php");
     const data = await res.json();
 
     if (data.logueado) {
@@ -27,10 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error(error);
   }
 
-  // Obtener productos del localStorage
   const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-
-  // Agrupar productos por ID
   const productosAgrupados = carrito.reduce((acc, producto) => {
     const existente = acc.find(p => p.id === producto.id);
     if (existente) {
@@ -42,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }, []);
 
   let total = 0;
-  const inputAbono = document.getElementById("abono"); // ahora es abono
+  const inputAbono = document.getElementById("abono");
   const btnComprar = document.getElementById("btnComprar");
 
   if (productosAgrupados.length === 0) {
@@ -62,41 +58,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   totalContenedor.textContent = `$${total.toFixed(2)}`;
 
-  // Cargar abono guardado (antes era montoIngresado)
   const abonoGuardado = localStorage.getItem("abono");
-if (abonoGuardado) {
-  inputAbono.value = abonoGuardado;
-  const abono = parseFloat(abonoGuardado);
-  console.log("Abono guardado:", abonoGuardado);
-  console.log("Abono guardado parseado:", abono);
-  if (!isNaN(abono) && abono >= total) {
-    btnComprar.classList.remove("hidden");
-    console.log("Botón mostrado al cargar");
+  if (abonoGuardado) {
+    inputAbono.value = abonoGuardado;
+    const abono = parseFloat(abonoGuardado);
+    if (!isNaN(abono) && abono >= total) {
+      btnComprar.classList.remove("hidden");
+    }
   }
-}
 
+  inputAbono.addEventListener("input", () => {
+    const abono = parseFloat(inputAbono.value);
+    localStorage.setItem("abono", inputAbono.value);
+    if (!isNaN(abono) && abono >= total) {
+      btnComprar.classList.remove("hidden");
+    } else {
+      btnComprar.classList.add("hidden");
+    }
+  });
 
-inputAbono.addEventListener("input", () => {
-  const abono = parseFloat(inputAbono.value);
-  console.log("Input abono:", inputAbono.value);
-  console.log("Abono parseado:", abono);
-  console.log("Total:", total);
-
-  localStorage.setItem("abono", inputAbono.value);
-
-  if (!isNaN(abono) && abono >= total) {
-    btnComprar.classList.remove("hidden");
-    console.log("Botón mostrar");
-  } else {
-    btnComprar.classList.add("hidden");
-    console.log("Botón ocultar");
-  }
-});
-
-
-  // Modales
   const modalConfirmacion = document.getElementById("modalConfirmacion");
   const modalConfirmacionCompra = document.getElementById("modalConfirmacionCompra");
+  const modalProcesando = document.getElementById("modalProcesando");
   const btnConfirmarCompra = document.getElementById("btnConfirmarCompra");
   const btnCancelar = document.getElementById("btnCancelar");
   const btnCerrarConfirmacion = document.getElementById("btnCerrarConfirmacion");
@@ -121,15 +104,18 @@ inputAbono.addEventListener("input", () => {
         return;
       }
 
+      modalConfirmacion.classList.add("hidden");
+      modalProcesando.classList.remove("hidden");
+
       const pago_en = "efectivo";
       const estado_pedido = "esperando";
       const mensaje = localStorage.getItem("mensajePedidoPersonalizado") || '';
       const abono = parseFloat(localStorage.getItem("abono"));
       const vuelto = abono - total;
-      localStorage.setItem(`vuelto_${id_usuario}`, vuelto.toFixed(2)); // opcional
+      localStorage.setItem(`vuelto_${id_usuario}`, vuelto.toFixed(2));
 
       try {
-        const response = await fetch("http://localhost/kioskoTecnica4/client/pagos/insertar_venta.php", {
+        const response = await fetch("http://138.219.42.29/client/pagos/insertar_venta.php", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -145,21 +131,21 @@ inputAbono.addEventListener("input", () => {
         const data = await response.json();
 
         if (data.success) {
-          modalConfirmacion.classList.add("hidden");
+          modalProcesando.classList.add("hidden");
           modalConfirmacionCompra.classList.remove("hidden");
 
           localStorage.removeItem("carrito");
           localStorage.removeItem("mensajePedidoPersonalizado");
           localStorage.removeItem("abono");
         } else {
+          modalProcesando.classList.add("hidden");
           alert("Hubo un error al realizar la compra: " + (data.error || "Error desconocido."));
           console.error(data);
-          modalConfirmacion.classList.add("hidden");
         }
       } catch (error) {
+        modalProcesando.classList.add("hidden");
         alert("Error de red al procesar la compra.");
         console.error(error);
-        modalConfirmacion.classList.add("hidden");
       }
     });
   }

@@ -1,11 +1,11 @@
 window.addEventListener('DOMContentLoaded', () => {
   // Primero intento obtener sesión y datos de usuario logueado
-  fetch('http://localhost/kioskoTecnica4/client/login/obtener_usuario.php')
+  fetch('http://138.219.42.29/client/login/obtener_usuario.php')
     .then(response => response.json())
     .then(data => {
       if (data.logueado) {
         // Si está logueado, verifico si está baneado
-        fetch(`http://localhost/kioskoTecnica4/client/login/obtenerBaneo.php?id=${data.id_usuario}`)
+        fetch(`http://138.219.42.29/client/login/obtenerBaneo.php?id=${data.id_usuario}`)
           .then(response => response.json())
           .then(baneoData => {
             if (baneoData.baneado) {

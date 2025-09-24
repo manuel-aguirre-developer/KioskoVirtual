@@ -13,11 +13,11 @@ switch ($periodo) {
         break;
 
     case 'mes_pasado':
-        $fecha_inicio = date('Y-m-01 00:00:00', strtotime('first day of last month'));
-        $fecha_fin = date('Y-m-t 23:59:59', strtotime('last day of last month'));
-        $fecha_inicio_pasado = null;
-        $fecha_fin_pasado = null;
-        break;
+    $fecha_inicio = date('Y-m-01 00:00:00', strtotime('first day of last month'));
+    $fecha_fin = date('Y-m-t 23:59:59', strtotime('last day of last month'));
+    $fecha_inicio_pasado = date('Y-m-01 00:00:00', strtotime('first day of -2 months'));
+    $fecha_fin_pasado = date('Y-m-t 23:59:59', strtotime('last day of -2 months'));
+    break;
 
     case 'semana':
     default:

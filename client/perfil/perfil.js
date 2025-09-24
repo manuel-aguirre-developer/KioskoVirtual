@@ -1,5 +1,5 @@
 // Función para cargar los datos del usuario
-fetch('http://localhost/kioskoTecnica4/client/perfil/perfil.php')
+fetch('http://138.219.42.29/client/perfil/perfil.php')
   .then(response => response.json())
   .then(data => {
     const usuarioDatos = document.getElementById('usuarioDatos');
