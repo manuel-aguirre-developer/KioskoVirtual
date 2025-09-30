@@ -1,3 +1,4 @@
+
 function abrirModal(tipo) {
   const modal = document.getElementById('modalInfo');
   const titulo = document.getElementById('modalTitulo');

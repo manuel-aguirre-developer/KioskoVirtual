@@ -1,10 +1,12 @@
+const BASE_URL = process.env.BASE_URL;
+
 document.addEventListener('DOMContentLoaded', () => {
   verificarSesionYBaneo();
 });
 
 async function verificarSesionYBaneo() {
   try {
-    const resUsuario = await fetch('http://138.219.42.29/client/login/obtener_usuario.php');
+    const resUsuario = await fetch('${BASE_URL}/client/login/obtener_usuario.php');
     const data = await resUsuario.json();
 
     const botonLogin = document.getElementById('botonlogin');
@@ -15,7 +17,7 @@ async function verificarSesionYBaneo() {
       }
 
       // Verifica si está baneado
-      const resBaneo = await fetch(`http://138.219.42.29/client/login/obtenerBaneo.php?id=${data.id_usuario}`);
+      const resBaneo = await fetch(`${BASE_URL}/client/login/obtenerBaneo.php?id=${data.id_usuario}`);
       const baneoData = await resBaneo.json();
 
 
@@ -75,7 +77,7 @@ function ajustarBotonesSesion(logueado) {
 }
 
 function cargarPerfil() {
-  fetch('http://138.219.42.29/client/perfil/perfil.php')
+  fetch('${BASE_URL}/client/perfil/perfil.php')
     .then(response => response.json())
     .then(data => {
       const form = document.getElementById('usuarioForm');
@@ -176,7 +178,7 @@ function asignarEventos() {
       const form = document.getElementById('usuarioForm');
       const formData = new FormData(form);
 
-      fetch('http://138.219.42.29/client/configuracion/config.php', {
+      fetch('${BASE_URL}/client/configuracion/config.php', {
         method: 'POST',
         body: formData
       })
@@ -244,13 +246,13 @@ function cerrarLoginModal() {
 }
 
 function accionCerrarSesion() {
-  fetch('http://138.219.42.29/client/login/obtener_usuario.php')
+  fetch('${BASE_URL}/client/login/obtener_usuario.php')
     .then(response => response.json())
     .then(data => {
       if (!data.logueado) {
         alert("No se puede cerrar sesión porque aún no se ha iniciado sesión.");
       } else {
-        window.location.href = "http://138.219.42.29/client/login/cerrarsesion.php";
+        window.location.href = "${BASE_URL}/client/login/cerrarsesion.php";
       }
     })
     .catch(error => {

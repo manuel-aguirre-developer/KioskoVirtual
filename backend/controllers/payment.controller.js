@@ -1,3 +1,6 @@
+const BASE_URL = process.env.BASE_URL;
+const WS_URL = process.env.WS_URL;
+
 const mercadopago = require('mercadopago');
 require('dotenv').config();
 const { db } = require('../config');
@@ -147,11 +150,11 @@ exports.createPreference = async (req, res) => {
       quantity: p.quantity,
       unit_price: p.unit_price
     })),
-    notification_url: "http://138.219.42.29/api/payments/webhook",
+    notification_url: "${BASE_URL}/api/payments/webhook",
     back_urls: {
-      success: "https://138.219.42.29/mp/gracias.html",
-      failure: "https://138.219.42.29/mp/fallo.html",
-      pending: "https://138.219.42.29/mp/pendiente.html"
+      success: "${BASE_URL}/mp/gracias.html",
+      failure: "${BASE_URL}/mp/fallo.html",
+      pending: "${BASE_URL}/mp/pendiente.html"
     },
     auto_return: "approved",
     metadata: {

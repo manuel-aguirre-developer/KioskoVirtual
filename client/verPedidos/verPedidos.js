@@ -1,10 +1,13 @@
+const BASE_URL = process.env.BASE_URL;
+const WS_URL = process.env.WS_URL;
+
 let socket;
 let todosLosPedidos = [];
 let usuarioActualId = null;
 const botonesFiltro = document.getElementById('botonesFiltro');
 
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('http://138.219.42.29/client/login/obtener_usuario.php')
+  fetch('${BASE_URL}/client/login/obtener_usuario.php')
     .then(response => response.json())
     .then(data => {
       if (!data.logueado) {
@@ -39,28 +42,28 @@ function iniciarWebSocket(userId) {
   botonesFiltro.style.display = 'none';
   usuarioActualId = userId;
 
-  socket = new WebSocket("ws://138.219.42.29/ws");
+  socket = new WebSocket(WS_URL);
 
   socket.onopen = () => {
     // Conexión abierta
   };
 
   socket.onmessage = (event) => {
-  const datos = JSON.parse(event.data);
+    const datos = JSON.parse(event.data);
 
-  if (datos.tipo === 'pedidos') {
-    const pedidosUsuario = datos.pedidos.filter(p => p.id_usuario === userId);
-    todosLosPedidos = pedidosUsuario;
+    if (datos.tipo === 'pedidos') {
+      const pedidosUsuario = datos.pedidos.filter(p => p.id_usuario === userId);
+      todosLosPedidos = pedidosUsuario;
 
-    const hayRecientes = hayPedidosRecientes(todosLosPedidos);
+      const hayRecientes = hayPedidosRecientes(todosLosPedidos);
 
-    if (hayRecientes) {
-      botonesFiltro.style.display = 'block';
+      if (hayRecientes) {
+        botonesFiltro.style.display = 'block';
+      }
+
+      mostrarPendientes(); // Mostrar pendientes aunque estén vacíos
     }
-
-    mostrarPendientes(); // Mostrar pendientes aunque estén vacíos
-  }
-};
+  };
 
   socket.onclose = () => {
     console.warn("WebSocket cerrado. Reintentando en 5 segundos...");
@@ -135,74 +138,74 @@ function cargarDetallesPedido(idVenta) {
   const modal = document.getElementById('modalDetalle');
   const detalleTexto = document.getElementById('detalleTexto');
 
-  fetch(`http://138.219.42.29/client/verPedidos/detalles_venta.php?id_venta=${idVenta}`)
-  .then(response => {
-    if (!response.ok) throw new Error('Error al obtener los detalles');
-    return response.json();
-  })
-  .then(data => {
-    detalleTexto.innerHTML = '';
+  fetch(`${BASE_URL}/client/verPedidos/detalles_venta.php?id_venta=${idVenta}`)
+    .then(response => {
+      if (!response.ok) throw new Error('Error al obtener los detalles');
+      return response.json();
+    })
+    .then(data => {
+      detalleTexto.innerHTML = '';
 
-    if (data.length === 0) {
-      detalleTexto.innerHTML = `<p class="text-gray-500">Sin detalles para este pedido.</p>`;
-    } else {
+      if (data.length === 0) {
+        detalleTexto.innerHTML = `<p class="text-gray-500">Sin detalles para este pedido.</p>`;
+      } else {
 
-      const metodoPago = data[0].pago_en || 'N/A';
-const mensaje = data[0].mensaje || 'No mandaste ningún mensaje.';
-let abono = parseFloat(data[0].abono) || 0.00;
+        const metodoPago = data[0].pago_en || 'N/A';
+        const mensaje = data[0].mensaje || 'No mandaste ningún mensaje.';
+        let abono = parseFloat(data[0].abono) || 0.00;
 
-// Si el método de pago es transferencia, se toma como abono el total del producto
-const totalSubtotal = data.reduce((acc, item) => acc + parseFloat(item.subtotal), 0);
-if (metodoPago.toLowerCase() === 'transferencia') {
-  abono = totalSubtotal;
-}
+        // Si el método de pago es transferencia, se toma como abono el total del producto
+        const totalSubtotal = data.reduce((acc, item) => acc + parseFloat(item.subtotal), 0);
+        if (metodoPago.toLowerCase() === 'transferencia') {
+          abono = totalSubtotal;
+        }
 
-const vuelto = (abono - totalSubtotal).toFixed(2);
+        const vuelto = (abono - totalSubtotal).toFixed(2);
 
-const infoExtra = document.createElement('div');
-infoExtra.innerHTML = `
+        const infoExtra = document.createElement('div');
+        infoExtra.innerHTML = `
   <p class="mb-2 text-sm"><strong>Método de pago:</strong> ${metodoPago}</p>
   <p class="mb-2 text-sm"><strong>Mensaje personalizado:</strong> ${mensaje}</p>
   <p class="mb-2 text-sm"><strong>Pagaste con:</strong> $${abono.toFixed(2)}</p>
   <p class="mb-4 text-sm"><strong>Vuelto a recibir:</strong> $${vuelto}</p>
 `;
-detalleTexto.appendChild(infoExtra);
+        detalleTexto.appendChild(infoExtra);
 
 
-      const lista = document.createElement('ul');
-      lista.classList.add('list-disc', 'ml-4');
+        const lista = document.createElement('ul');
+        lista.classList.add('list-disc', 'ml-4');
 
-      data.forEach(detalle => {
-        const li = document.createElement('li');
-        li.innerHTML = `
+        data.forEach(detalle => {
+          const li = document.createElement('li');
+          li.innerHTML = `
           <p><strong>ID:</strong> ${detalle.id_producto}</p> 
           <p><strong>Producto que llevas:</strong> ${detalle.nombre_producto}</p>
           <p><strong>Cantidad que llevas:</strong> ${detalle.cantidad}</p>
           <p><strong>Subtotal:</strong> $${parseFloat(detalle.subtotal).toFixed(2)}</p>
         `;
-        li.classList.add('mb-2', 'border', 'p-2', 'rounded', 'bg-gray-50');
-        lista.appendChild(li);
-      });
+          li.classList.add('mb-2', 'border', 'p-2', 'rounded', 'bg-gray-50');
+          lista.appendChild(li);
+        });
 
-      detalleTexto.appendChild(lista);
-    }
+        detalleTexto.appendChild(lista);
+      }
 
-    modal.classList.remove('hidden');
-  })
-  .catch(error => {
-    detalleTexto.innerHTML = `<p class="text-red-500">Error al cargar detalles: ${error.message}</p>`;
-    modal.classList.remove('hidden');
-  });
+      modal.classList.remove('hidden');
+    })
+    .catch(error => {
+      detalleTexto.innerHTML = `<p class="text-red-500">Error al cargar detalles: ${error.message}</p>`;
+      modal.classList.remove('hidden');
+    });
 
 }
 
 function cerrarLoginModal() {
-  window.location.href = "../../index.html";
+  window.location.href = "${BASE_URL}/index.html";
   document.getElementById("modalLogin").classList.add("hidden");
 }
 
 function redirigirLogin() {
-  window.location.href = "../../client/login/login.html";
+  window.location.href = "${BASE_URL}/client/login/login.html";
 }
 function hayPedidosRecientes(pedidos) {
   const fechaActual = new Date();

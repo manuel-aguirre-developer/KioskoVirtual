@@ -1,11 +1,14 @@
+const BASE_URL = process.env.BASE_URL;
+const WS_URL = process.env.WS_URL;
+
 window.addEventListener('DOMContentLoaded', () => {
   // Primero intento obtener sesión y datos de usuario logueado
-  fetch('http://138.219.42.29/client/login/obtener_usuario.php')
+  fetch('${BASE_URL}/client/login/obtener_usuario.php')
     .then(response => response.json())
     .then(data => {
       if (data.logueado) {
         // Si está logueado, verifico si está baneado
-        fetch(`http://138.219.42.29/client/login/obtenerBaneo.php?id=${data.id_usuario}`)
+        fetch(`${BASE_URL}/client/login/obtenerBaneo.php?id=${data.id_usuario}`)
           .then(response => response.json())
           .then(baneoData => {
             if (baneoData.baneado) {
@@ -13,12 +16,12 @@ window.addEventListener('DOMContentLoaded', () => {
               mostrarModalBaneo(baneoData.id);
             } else {
               // No baneado y logueado: redirigir a index o catálogo para no permitir login/registro
-              window.location.href = '../../index.html';
+              window.location.href = BASE_URL + '/index.html';
             }
           })
           .catch(() => {
             // Si falla la verificación de baneo, por seguridad también redirijo
-            window.location.href = '../../index.html';
+            window.location.href = BASE_URL + '/index.html';
           });
       } else {
         // No está logueado: mostrar formularios y errores normalmente

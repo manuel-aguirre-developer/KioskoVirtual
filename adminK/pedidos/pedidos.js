@@ -1,14 +1,17 @@
+const BASE_URL = process.env.BASE_URL;
+const WS_URL = process.env.WS_URL;
+
 let pedidos = [];
 let socket;
 let paginaActual = 1;
 const pedidosPorPagina = 10;
 
 // Verificar si está logueado
-fetch('../obtener_admin.php')
+fetch( BASE_URL + 'adminK/obtener_admin.php')
   .then(res => res.json())
   .then(data => {
     if (!data.logueado) {
-      location.href = '../../index.html';
+      location.href = BASE_URL + '/index.html';
     } else {
       conectarWebSocket();
     }
@@ -22,7 +25,7 @@ function conectarWebSocket() {
   const spinner = document.getElementById('spinner');
   spinner.style.display = 'flex';
 
-  socket = new WebSocket('ws://138.219.42.29/ws');
+  socket = new WebSocket(WS_URL);
 
   socket.addEventListener('open', () => {
     console.log('Conectado al servidor WebSocket — ¡WebSocket activo y funcionando!');

@@ -26,9 +26,9 @@ if ($method === 'GET' && $action === 'get') {
         $precio = $_POST['precio'] ?? 0;
      if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === 0) {
     $nombreArchivo = basename($_FILES['imagen']['name']);
-    $rutaDestino = '../../imagenes/' . $nombreArchivo;
+    $rutaDestino = '../../images/' . $nombreArchivo;
     move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaDestino);
-    $imagen = 'imagenes/' . $nombreArchivo;
+    $imagen = 'images/' . $nombreArchivo;
 } else {
     $imagen = $_POST['imagen_actual'] ?? ''; // 👈 usa la imagen anterior si no se subió una nueva
 }
@@ -53,9 +53,9 @@ if ($method === 'GET' && $action === 'get') {
     // Verifica si se subió una nueva imagen
     if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === 0) {
         $nombreArchivo = basename($_FILES['imagen']['name']);
-        $rutaDestino = '../../imagenes/' . $nombreArchivo;
+        $rutaDestino = '../../images/' . $nombreArchivo;
         move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaDestino);
-        $imagen = 'imagenes/' . $nombreArchivo;
+        $imagen = 'images/' . $nombreArchivo;
     } else {
         // Usa la imagen actual si no se sube una nueva
         $imagen = $_POST['imagen_actual'] ?? '';

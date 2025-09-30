@@ -1,8 +1,10 @@
+const BASE_URL = process.env.BASE_URL;
+
 verificarSesionYBaneo();
 mostrarCarrito();
 async function verificarSesionYBaneo() {
   try {
-    const resUsuario = await fetch('http://138.219.42.29/client/login/obtener_usuario.php');
+    const resUsuario = await fetch('${BASE_URL}/client/login/obtener_usuario.php');
     const data = await resUsuario.json();
 
     const nombreUsuarioSpan = document.getElementById('nombreUsuario');
@@ -17,7 +19,7 @@ async function verificarSesionYBaneo() {
       }
 
       // Verifica si está baneado
-      const resBaneo = await fetch(`http://138.219.42.29/client/login/obtenerBaneo.php?id=${data.id_usuario}`);
+      const resBaneo = await fetch(`${BASE_URL}/client/login/obtenerBaneo.php?id=${data.id_usuario}`);
       const baneoData = await resBaneo.json();
 
       if (baneoData.baneado) {
@@ -169,7 +171,7 @@ function cerrarMetodo() {
 }
 
 function pagarEfectivo() {
-  fetch('http://138.219.42.29/client/carrito/obtener_user_compra.php')
+  fetch('${BASE_URL}/client/carrito/obtener_user_compra.php')
     .then(response => response.json())
     .then(data => {
       cerrarMetodo();
@@ -208,7 +210,7 @@ function mostrarNotificacion(mensaje) {
 }
 
 document.getElementById('pagarTransferencia').addEventListener('click', async () => {
-  const userRes = await fetch('http://138.219.42.29/client/carrito/obtener_user_compra.php');
+  const userRes = await fetch('${BASE_URL}/client/carrito/obtener_user_compra.php');
   const userData = await userRes.json();
     
   if (!userData.logueado) {

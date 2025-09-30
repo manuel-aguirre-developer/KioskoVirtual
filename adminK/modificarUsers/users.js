@@ -1,3 +1,6 @@
+const BASE_URL = process.env.BASE_URL;
+const WS_URL = process.env.WS_URL;
+
 let usuariosGlobal = [];
 let usuariosFiltrados = [];
 let paginaActual = 1;
@@ -6,7 +9,7 @@ const usuariosPorPagina = 10;
 const spinner = document.getElementById('spinner');
 const buscador = document.getElementById('buscadorUsuarios');
 
-const ws = new WebSocket('ws://138.219.42.29/ws');
+const ws = new WebSocket(WS_URL);
 
 ws.addEventListener('open', () => {
   console.log('Conectado a WebSocket');

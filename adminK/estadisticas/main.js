@@ -1,13 +1,15 @@
+const BASE_URL = process.env.BASE_URL;
+
 document.addEventListener('DOMContentLoaded', () => {
   // Verificar sesión
   fetch('../obtener_admin.php')
     .then(res => res.json())
     .then(data => {
       if (!data.logueado || (data.rol !== 'admin' && data.rol !== 'vendedor')) {
-        location.href = '../../index.html';
+        location.href = BASE_URL + '/index.html';
       }
     })
-    .catch(() => location.href = '../../index.html');
+    .catch(() => location.href = BASE_URL + '/index.html');
   const filtroSelect = document.getElementById('filtro');
   const mychart = document.getElementById("GraficoVentas");
   let graficoVentas; // Referencia al gráfico Chart.js
