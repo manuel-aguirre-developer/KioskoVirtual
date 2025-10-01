@@ -27,7 +27,7 @@ function mostrarSplash() {
 function cargarTextoBienvenida() {
   let textoBienvenida = "Kiosko Virtual";
 
-  fetch('https://kioskotecnica4.com/client/login/obtener_usuario.php')
+  fetch('./../login/obtener_usuario.php')
     .then(response => response.json())
     .then(data => {
       if (data.logueado) {
@@ -109,7 +109,7 @@ window.addEventListener("load", () => {
 // function cargarTextoBienvenida() {
 //   let textoBienvenida = "Kiosko Virtual"; // default si no estÃ¡ logueado
 
-//   fetch('https://kioskotecnica4.com/client/login/obtener_usuario.php')
+//   fetch('./../login/obtener_usuario.php')
 //     .then(response => response.json())
 //     .then(data => {
 //       if (data.logueado) {
@@ -244,7 +244,7 @@ socket.onerror = (error) => {
 const fingerprint = localStorage.getItem('fingerprint') || 'no_detectado';
 
 // ?? Verificar usuario y baneo por cookie + fingerprint
-fetch('https://kioskotecnica4.com/client/login/obtener_usuario.php', {
+fetch('./../login/obtener_usuario.php', {
   method: 'POST',
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   credentials: 'include',
@@ -275,7 +275,7 @@ fetch('https://kioskotecnica4.com/client/login/obtener_usuario.php', {
       if (botonLogin) botonLogin.setAttribute('onclick', 'irAPerfil()');
 
       // Verificar si está baneado por ID
-      fetch(`https://kioskotecnica4.com/client/login/obtenerBaneo.php?id=${data.id_usuario}`)
+      fetch(`./../login/obtenerBaneo.php?id=${data.id_usuario}`)
         .then(response => response.json())
         .then(baneoData => {
           if (baneoData.baneado) bloquearUsuarioBaneadoUI(baneoData.id);
@@ -322,11 +322,11 @@ function accionInicio() {
 }
 
 function verPedidos() {
-  window.location.href = "https://kioskotecnica4.com/client/verPedidos/verPedidos.html";
+  window.location.href = "./../verPedidos/verPedidos.html";
 }
 
 function irAPerfil() {
-  window.location.href = "https://kioskotecnica4.com/client/perfil/index.html";
+  window.location.href = "./../perfil/index.html";
 }
 // ?? VARIABLE GLOBAL PARA LA INSTALACIÓN PWA
 let deferredPrompt = null;
@@ -431,7 +431,7 @@ window.addEventListener('resize', ajustarBotonCarrito);
 
 
 function accionCerrarSesion() {
-  fetch('https://kioskotecnica4.com/client/login/obtener_usuario.php')  // AsegÃºrate de que esta ruta sea correcta
+  fetch('./../login/obtener_usuario.php')  // AsegÃºrate de que esta ruta sea correcta
     .then(response => response.json())
     .then(data => {
       if (!data.logueado) {
@@ -444,7 +444,7 @@ function accionCerrarSesion() {
         }, 4000);
       } else {
         // Si estÃ¡ logueado, redirige al servidor para cerrar sesiÃ³n
-        window.location.href = "https://kioskotecnica4.com/client/login/cerrarsesion.php";
+        window.location.href = "./../login/cerrarsesion.php";
       }
     })
     .catch(error => {
@@ -817,7 +817,7 @@ if ('serviceWorker' in navigator) {
           }
 
           // Suponiendo que tenés lógica para obtener el usuario logueado
-          const resUser = await fetch('https://kioskotecnica4.com/client/login/obtener_usuario.php');
+          const resUser = await fetch('./../login/obtener_usuario.php');
           const userData = await resUser.json();
           if (!userData.logueado) {
             alert('Debes estar logueado para activar notificaciones.');

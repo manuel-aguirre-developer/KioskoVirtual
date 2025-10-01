@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let id_usuario = null;
 
   try {
-    const res = await fetch("http://138.219.42.29/client/carrito/obtener_user_compra.php");
+    const res = await fetch("./carrito/obtener_user_compra.php");
     const data = await res.json();
 
     if (data.logueado) {
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       localStorage.setItem(`vuelto_${id_usuario}`, vuelto.toFixed(2));
 
       try {
-        const response = await fetch("http://138.219.42.29/client/pagos/insertar_venta.php", {
+        const response = await fetch("./pagos/insertar_venta.php", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (btnCerrarConfirmacion) {
     btnCerrarConfirmacion.addEventListener("click", () => {
       modalConfirmacionCompra.classList.add("hidden");
-      window.location.href = "../verPedidos/verPedidos.html";
+      window.location.href = "./../verPedidos/verPedidos.html";
     });
   }
 });

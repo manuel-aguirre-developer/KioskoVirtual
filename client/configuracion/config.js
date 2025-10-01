@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function verificarSesionYBaneo() {
   try {
-    const resUsuario = await fetch('http://138.219.42.29/client/login/obtener_usuario.php');
+    const resUsuario = await fetch('/login/obtener_usuario.php');
     const data = await resUsuario.json();
 
     const botonLogin = document.getElementById('botonlogin');
@@ -15,7 +15,7 @@ async function verificarSesionYBaneo() {
       }
 
       // Verifica si está baneado
-      const resBaneo = await fetch(`http://138.219.42.29/client/login/obtenerBaneo.php?id=${data.id_usuario}`);
+      const resBaneo = await fetch(`./../login/obtenerBaneo.php?id=${data.id_usuario}`);
       const baneoData = await resBaneo.json();
 
 
@@ -75,7 +75,7 @@ function ajustarBotonesSesion(logueado) {
 }
 
 function cargarPerfil() {
-  fetch('http://138.219.42.29/client/perfil/perfil.php')
+  fetch('./../perfil/perfil.php')
     .then(response => response.json())
     .then(data => {
       const form = document.getElementById('usuarioForm');
@@ -176,7 +176,7 @@ function asignarEventos() {
       const form = document.getElementById('usuarioForm');
       const formData = new FormData(form);
 
-      fetch('http://138.219.42.29/client/configuracion/config.php', {
+      fetch('./../configuracion/config.php', {
         method: 'POST',
         body: formData
       })
@@ -236,21 +236,21 @@ function mostrarLoginModal() {
 }
 
 function redirigirLogin() {
-  window.location.href = "../login/login.html";
+  window.location.href = "./../login/login.html";
 }
 
 function cerrarLoginModal() {
-  window.location.href = "../../index.html";
+  window.location.href = "./../../index.html";
 }
 
 function accionCerrarSesion() {
-  fetch('http://138.219.42.29/client/login/obtener_usuario.php')
+  fetch('./../login/obtener_usuario.php')
     .then(response => response.json())
     .then(data => {
       if (!data.logueado) {
         alert("No se puede cerrar sesión porque aún no se ha iniciado sesión.");
       } else {
-        window.location.href = "http://138.219.42.29/client/login/cerrarsesion.php";
+        window.location.href = "./../login/cerrarsesion.php";
       }
     })
     .catch(error => {

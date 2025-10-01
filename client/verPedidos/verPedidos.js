@@ -4,7 +4,7 @@ let usuarioActualId = null;
 const botonesFiltro = document.getElementById('botonesFiltro');
 
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('http://138.219.42.29/client/login/obtener_usuario.php')
+  fetch('./../login/obtener_usuario.php')
     .then(response => response.json())
     .then(data => {
       if (!data.logueado) {
@@ -39,7 +39,7 @@ function iniciarWebSocket(userId) {
   botonesFiltro.style.display = 'none';
   usuarioActualId = userId;
 
-  socket = new WebSocket("ws://138.219.42.29/ws");
+  socket = new WebSocket("ws://localhost:3000/ws");
 
   socket.onopen = () => {
     // Conexión abierta
@@ -135,7 +135,7 @@ function cargarDetallesPedido(idVenta) {
   const modal = document.getElementById('modalDetalle');
   const detalleTexto = document.getElementById('detalleTexto');
 
-  fetch(`http://138.219.42.29/client/verPedidos/detalles_venta.php?id_venta=${idVenta}`)
+  fetch(`./verPedidos/detalles_venta.php?id_venta=${idVenta}`)
   .then(response => {
     if (!response.ok) throw new Error('Error al obtener los detalles');
     return response.json();
