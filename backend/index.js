@@ -11,7 +11,10 @@ require('dotenv').config();
 const paymentRoutes = require('./routes/payment.routes');
 
 const app = express();
-const port = 3006;
+const port =  3006;
+const BASE_URL = process.env.BASE_URL;
+const WS_URL = process.env.WS_URL;
+
 
 // Middlewares
 app.use(cors());
@@ -36,13 +39,12 @@ paymentController.initSockets(wss);
 
 // Conexión MySQL
 const db = mysql.createConnection({
-  host: 'localhost',   // IP o dominio de tu servidor cloud
-  port: 3306,              // puerto MySQL (normalmente 3306)
-  user: 'root',     // usuario que creaste con acceso remoto
-  password: 'biblioteca4',        // contraseña correcta
-  database: 'kiosko'
+  host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'kiosko'
 });
-
 
 // Función de hash
 function calcularHash(obj) {

@@ -1,5 +1,8 @@
+const BASE_URL = process.env.BASE_URL;
+const WS_URL = process.env.WS_URL;
+
 // Función para cargar los datos del usuario
-fetch('./perfil/perfil.php')
+fetch('${BASE_URL}/client/perfil/perfil.php')
   .then(response => response.json())
   .then(data => {
     const usuarioDatos = document.getElementById('usuarioDatos');

@@ -1,3 +1,6 @@
+const BASE_URL = process.env.BASE_URL;
+const WS_URL = process.env.WS_URL;
+
 let noti;
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -7,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(data => {
       if (!data.logueado) {
         // Si no está logueado, redirigimos al index
-        location.href = '../../index.html';
+        location.href = BASE_URL + '/index.html';
       } else {
         // Si está logueado, inicializamos todo el panel de productos
         iniciarPanelProductos();
@@ -15,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })
     .catch(err => {
       console.error("Error al verificar login:", err);
-      location.href = '../../index.html';
+      location.href = BASE_URL + '/index.html';
     });
 
   function iniciarPanelProductos() {
@@ -39,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Cargar productos al inicio
     function cargarProductos() {
-      fetch('../../bd/obtener_productos.php?action=get')
+      fetch(BASE_URL + '/bd/obtener_productos.php?action=get')
         .then(response => response.json())
         .then(data => {
           productos = data;
@@ -245,8 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('imagen_actual').value = producto.imagen;
 
             const imgContainer = document.getElementById('imagenProducto');
-            const urlBase = 'http://138.219.42.29/';
-            imgContainer.innerHTML = `<img src="${urlBase}${producto.imagen}" alt="Imagen del producto" class="w-full h-auto rounded-lg">`;
+            imgContainer.innerHTML = `<img src="${BASE_URL}${producto.imagen}" alt="Imagen del producto" class="w-full h-auto rounded-lg">`;
             modalModificar.classList.remove('hidden');
           })
           .catch(error => console.error('Error al obtener producto:', error));

@@ -1,3 +1,6 @@
+const BASE_URL = process.env.BASE_URL;
+const WS_URL = process.env.WS_URL;
+
 const logo = document.getElementById("logo");
 const bienvenidoText = document.getElementById("bienvenido");
 const splash = document.getElementById("splash");
@@ -26,7 +29,7 @@ function mostrarSplash() {
 
 function cargarTextoBienvenida() {
   let textoBienvenida = "Kiosko Virtual";
-  fetch('http://138.219.42.29/adminK/obtener_admin.php')
+  fetch(BASE_URL + '/adminK/obtener_admin.php')
     .then(response => response.json())
     .then(data => {
       if (data.logueado) {
@@ -81,11 +84,11 @@ window.addEventListener("load", () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   // Check admin logueado
-  fetch('../obtener_admin.php')
+  fetch(BASE_URL + 'adminK/obtener_admin.php')
     .then(res => res.json())
     .then(data => {
       if (!data.logueado) {
-        location.href = '../../index.html';
+        location.href = BASE_URL + '/index.html';
       }
     });
 

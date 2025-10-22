@@ -1,3 +1,5 @@
+const BASE_URL = process.env.BASE_URL;
+
 document.addEventListener('DOMContentLoaded', () => {
   // Mostrar error
   const errorDiv = document.getElementById('error-message');
@@ -14,10 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(res => res.json())
     .then(data => {
       if (data.logueado && (data.rol == 'admin' || data.rol == 'vendedor')) {
-        location.href = 'panel/panel.html';
+        location.href = BASE_URL + 'adminK/panel/panel.html';
       }
     })
     .catch(() => {
-      location.href = '../index.html';
+      location.href = BASE_URL + "/index.html";
     });
 });
