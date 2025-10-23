@@ -1,9 +1,9 @@
-const BASE_URL = process.env.BASE_URL;
-const WS_URL = process.env.WS_URL;
+const BASE_URL = "http://localhost/kiosko";
+const WS_URL = "ws://localhost:3006/kiosko";
 
 window.addEventListener('DOMContentLoaded', () => {
   // Primero intento obtener sesión y datos de usuario logueado
-  fetch('${BASE_URL}/client/login/obtener_usuario.php')
+  fetch(`${BASE_URL}/client/login/obtener_usuario.php`)
     .then(response => response.json())
     .then(data => {
       if (data.logueado) {

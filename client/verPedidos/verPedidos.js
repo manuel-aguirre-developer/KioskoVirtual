@@ -1,5 +1,5 @@
-const BASE_URL = process.env.BASE_URL;
-const WS_URL = process.env.WS_URL;
+const BASE_URL = "http://localhost/kiosko";
+const WS_URL = "ws://localhost:3006/kiosko";
 
 let socket;
 let todosLosPedidos = [];
@@ -7,7 +7,7 @@ let usuarioActualId = null;
 const botonesFiltro = document.getElementById('botonesFiltro');
 
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('${BASE_URL}/client/login/obtener_usuario.php')
+  fetch(`${BASE_URL}/client/login/obtener_usuario.php`)
     .then(response => response.json())
     .then(data => {
       if (!data.logueado) {
@@ -200,12 +200,12 @@ function cargarDetallesPedido(idVenta) {
 }
 
 function cerrarLoginModal() {
-  window.location.href = "${BASE_URL}/index.html";
+  window.location.href = `${BASE_URL}/index.html`;
   document.getElementById("modalLogin").classList.add("hidden");
 }
 
 function redirigirLogin() {
-  window.location.href = "${BASE_URL}/client/login/login.html";
+  window.location.href = `${BASE_URL}/client/login/login.html`;
 }
 function hayPedidosRecientes(pedidos) {
   const fechaActual = new Date();

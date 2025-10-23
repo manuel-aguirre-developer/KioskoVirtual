@@ -1,8 +1,8 @@
-const BASE_URL = process.env.BASE_URL;
-const WS_URL = process.env.WS_URL;
+const BASE_URL = "http://localhost/kiosko";
+const WS_URL = "ws://localhost:3006/kiosko";
 
 // Función para cargar los datos del usuario
-fetch('${BASE_URL}/client/perfil/perfil.php')
+fetch(`${BASE_URL}/client/perfil/perfil.php`)
   .then(response => response.json())
   .then(data => {
     const usuarioDatos = document.getElementById('usuarioDatos');

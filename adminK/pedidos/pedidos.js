@@ -1,13 +1,12 @@
-const BASE_URL = process.env.BASE_URL;
-const WS_URL = process.env.WS_URL;
-
+const BASE_URL = "http://localhost/kiosko";
+const WS_URL = "ws://localhost:3006/kiosko";
 let pedidos = [];
 let socket;
 let paginaActual = 1;
 const pedidosPorPagina = 10;
 
 // Verificar si está logueado
-fetch( BASE_URL + 'adminK/obtener_admin.php')
+fetch( BASE_URL + '/adminK/obtener_admin.php')
   .then(res => res.json())
   .then(data => {
     if (!data.logueado) {

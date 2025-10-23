@@ -1,4 +1,6 @@
-const BASE_URL = process.env.BASE_URL;
+const BASE_URL = "http://localhost/kiosko";
+const WS_URL = "ws://localhost:3006/kiosko";
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   const idInput = document.getElementById("id");
@@ -11,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let id_usuario = null;
 
   try {
-    const res = await fetch("${BASE_URL}/client/carrito/obtener_user_compra.php");
+    const res = await fetch(`${BASE_URL}/client/carrito/obtener_user_compra.php`);
     const data = await res.json();
 
     if (data.logueado) {
@@ -117,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       localStorage.setItem(`vuelto_${id_usuario}`, vuelto.toFixed(2));
 
       try {
-        const response = await fetch("${BASE_URL}/client/pagos/insertar_venta.php", {
+        const response = await fetch(`${BASE_URL}/client/pagos/insertar_venta.php`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

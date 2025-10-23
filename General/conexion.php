@@ -1,7 +1,7 @@
 <?php
-$host = "138.219.42.29"; // IP pública del servidor MySQL remoto
-$usuario = "kiosko_user";
-$clave = "aapc";
+$host = "localhost:3307"; // IP pública del servidor MySQL remoto
+$usuario = "root";
+$clave = "biblioteca4";
 $bd = "kiosko";
 
 $conexion = new mysqli($host, $usuario, $clave, $bd);

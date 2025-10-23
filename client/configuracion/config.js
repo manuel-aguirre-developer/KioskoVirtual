@@ -1,4 +1,5 @@
-const BASE_URL = process.env.BASE_URL;
+const BASE_URL = "http://localhost/kiosko";
+const WS_URL = "ws://localhost:3006/kiosko";
 
 document.addEventListener('DOMContentLoaded', () => {
   verificarSesionYBaneo();
@@ -6,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function verificarSesionYBaneo() {
   try {
-    const resUsuario = await fetch('${BASE_URL}/client/login/obtener_usuario.php');
+    const resUsuario = await fetch(`${BASE_URL}/client/login/obtener_usuario.php`);
     const data = await resUsuario.json();
 
     const botonLogin = document.getElementById('botonlogin');
@@ -77,7 +78,7 @@ function ajustarBotonesSesion(logueado) {
 }
 
 function cargarPerfil() {
-  fetch('${BASE_URL}/client/perfil/perfil.php')
+  fetch(`${BASE_URL}/client/perfil/perfil.php`)
     .then(response => response.json())
     .then(data => {
       const form = document.getElementById('usuarioForm');
@@ -178,7 +179,7 @@ function asignarEventos() {
       const form = document.getElementById('usuarioForm');
       const formData = new FormData(form);
 
-      fetch('${BASE_URL}/client/configuracion/config.php', {
+      fetch(`${BASE_URL}/client/configuracion/config.php`, {
         method: 'POST',
         body: formData
       })
@@ -214,7 +215,7 @@ function asignarEventos() {
 
   const closeSuccessModal = document.getElementById('closeSuccessModal');
   if (closeSuccessModal) {
-    closeSuccessModal.addEventListener('click', () => {
+    closeSuccessModal.addEventListener('click', () => { 
       document.getElementById('successModal').classList.add('hidden');
     });
   }
@@ -246,13 +247,13 @@ function cerrarLoginModal() {
 }
 
 function accionCerrarSesion() {
-  fetch('${BASE_URL}/client/login/obtener_usuario.php')
+  fetch(`${BASE_URL}/client/login/obtener_usuario.php`)
     .then(response => response.json())
     .then(data => {
       if (!data.logueado) {
         alert("No se puede cerrar sesión porque aún no se ha iniciado sesión.");
       } else {
-        window.location.href = "${BASE_URL}/client/login/cerrarsesion.php";
+        window.location.href = `${BASE_URL}/client/login/cerrarsesion.php`;
       }
     })
     .catch(error => {

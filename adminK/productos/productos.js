@@ -1,5 +1,5 @@
-const BASE_URL = process.env.BASE_URL;
-const WS_URL = process.env.WS_URL;
+const BASE_URL = "http://localhost/kiosko";
+const WS_URL = "ws://localhost:3006/kiosko";
 
 let noti;
 

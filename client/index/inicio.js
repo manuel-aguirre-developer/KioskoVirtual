@@ -1,5 +1,5 @@
-const BASE_URL = process.env.BASE_URL;
-const WS_URL = process.env.WS_URL;
+const BASE_URL = "http://localhost/kiosko";
+const WS_URL = "ws://localhost:3006/kiosko";
 
 const logo = document.getElementById("logo");
 const bienvenidoText = document.getElementById("bienvenido");
@@ -30,7 +30,7 @@ function mostrarSplash() {
 function cargarTextoBienvenida() {
   let textoBienvenida = "Kiosko Virtual";
 
-  fetch('${BASE_URL}/client/login/obtener_usuario.php')
+  fetch(`${BASE_URL}/client/login/obtener_usuario.php`)
     .then(response => response.json())
     .then(data => {
       if (data.logueado) {
@@ -247,7 +247,7 @@ socket.onerror = (error) => {
 const fingerprint = localStorage.getItem('fingerprint') || 'no_detectado';
 
 // ?? Verificar usuario y baneo por cookie + fingerprint
-fetch('${BASE_URL}/client/login/obtener_usuario.php', {
+fetch(`${BASE_URL}/client/login/obtener_usuario.php`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   credentials: 'include',
@@ -325,11 +325,11 @@ function accionInicio() {
 }
 
 function verPedidos() {
-  window.location.href = "${BASE_URL}/client/verPedidos/verPedidos.html";
+  window.location.href = "client/verPedidos/verPedidos.html";
 }
 
 function irAPerfil() {
-  window.location.href = "${BASE_URL}/client/perfil/index.html";
+  window.location.href = "client/perfil/index.html";
 }
 // ?? VARIABLE GLOBAL PARA LA INSTALACIÓN PWA
 let deferredPrompt = null;
@@ -434,7 +434,7 @@ window.addEventListener('resize', ajustarBotonCarrito);
 
 
 function accionCerrarSesion() {
-  fetch('${BASE_URL}/client/login/obtener_usuario.php')  // AsegÃºrate de que esta ruta sea correcta
+  fetch(`${BASE_URL}/client/login/obtener_usuario.php`)  // AsegÃºrate de que esta ruta sea correcta
     .then(response => response.json())
     .then(data => {
       if (!data.logueado) {
@@ -447,7 +447,7 @@ function accionCerrarSesion() {
         }, 4000);
       } else {
         // Si estÃ¡ logueado, redirige al servidor para cerrar sesiÃ³n
-        window.location.href = "${BASE_URL}/client/login/cerrarsesion.php";
+        window.location.href = `${BASE_URL}/client/login/cerrarsesion.php`;
       }
     })
     .catch(error => {
@@ -820,7 +820,7 @@ if ('serviceWorker' in navigator) {
           }
 
           // Suponiendo que tenés lógica para obtener el usuario logueado
-          const resUser = await fetch('${BASE_URL}/client/login/obtener_usuario.php');
+          const resUser = await fetch(`${BASE_URL}/client/login/obtener_usuario.php`);
           const userData = await resUser.json();
           if (!userData.logueado) {
             alert('Debes estar logueado para activar notificaciones.');

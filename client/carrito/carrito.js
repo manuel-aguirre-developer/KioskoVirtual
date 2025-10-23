@@ -1,10 +1,11 @@
-const BASE_URL = process.env.BASE_URL;
+const BASE_URL = "http://localhost/kiosko";
+const WS_URL = "ws://localhost:3006/kiosko";
 
-verificarSesionYBaneo();
+verificarSesionYBaneo();  
 mostrarCarrito();
 async function verificarSesionYBaneo() {
   try {
-    const resUsuario = await fetch('${BASE_URL}/client/login/obtener_usuario.php');
+    const resUsuario = await fetch(`${BASE_URL}/client/login/obtener_usuario.php`);
     const data = await resUsuario.json();
 
     const nombreUsuarioSpan = document.getElementById('nombreUsuario');
@@ -171,7 +172,7 @@ function cerrarMetodo() {
 }
 
 function pagarEfectivo() {
-  fetch('${BASE_URL}/client/carrito/obtener_user_compra.php')
+  fetch(`${BASE_URL}/client/carrito/obtener_user_compra.php`)
     .then(response => response.json())
     .then(data => {
       cerrarMetodo();
@@ -210,7 +211,7 @@ function mostrarNotificacion(mensaje) {
 }
 
 document.getElementById('pagarTransferencia').addEventListener('click', async () => {
-  const userRes = await fetch('${BASE_URL}/client/carrito/obtener_user_compra.php');
+  const userRes = await fetch(`${BASE_URL}/client/carrito/obtener_user_compra.php`);
   const userData = await userRes.json();
     
   if (!userData.logueado) {
